@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Ex2-OOP:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Ex2_OOP_jar</output-path>
+    <root id="archive" name="Ex2-OOP.jar">
+      <element id="module-output" name="Ex4_OOP" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
