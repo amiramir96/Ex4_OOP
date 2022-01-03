@@ -51,4 +51,8 @@ public class Point3D implements GeoLocation {
         double deltaY = this._y - g.y();
         return Math.sqrt(deltaX*deltaX + deltaY*deltaY);
     }
+
+    public String toString(){
+        return "x: "+this.x()+" y: "+this.y();
+    }
 }

@@ -32,7 +32,8 @@ class TenThousendNodesTest {
             JsonElement graphElement = JsonParser.parseReader(new FileReader(jsonGraphFile)); // shall read, so have to handle exception
             JsonObject graphObject = graphElement.getAsJsonObject(); // convert to json object, then we can work on fields inside
             // jsonToNode return list of nodes, jsonToEdge return list of edges, both is the req to cons Dwg(directed weighted graph)
-            LoadGraph g = new LoadGraph();
+            Dwg d = new Dwg();
+            LoadGraph g = new LoadGraph(d);
             ans = (Dwg) g.loadGraph(json_file);
         }
         catch (FileNotFoundException err){ // throw exception..

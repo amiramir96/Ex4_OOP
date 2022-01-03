@@ -499,8 +499,8 @@ public class DwgMagic implements DirectedWeightedGraphAlgorithms {
     @Override
     public boolean load(String file) {
         try {
-            DirectedWeightedGraph dwg;
-            LoadGraph l = new LoadGraph();
+            DirectedWeightedGraph dwg = new Dwg();
+            LoadGraph l = new LoadGraph(dwg);
             dwg = l.loadGraph(file);
             this.currGraph = dwg;
             this.isConnected = -1;

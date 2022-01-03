@@ -2,6 +2,9 @@ package director;
 
 import api.GeoLocation;
 import impGraph.Point3D;
+
+import java.util.List;
+
 /**
  * This class represents
  * Agent, someone that aim to be "Master Pokemon"!
@@ -14,7 +17,6 @@ public class Agent {
     int dest;
     double speed;
     GeoLocation pos;
-
     /**
      * constructor
      */
@@ -25,6 +27,7 @@ public class Agent {
         this.dest = d;
         this.speed = sp;
         this.pos = p;
+
     }
 
     public Agent(int ID, double v, int s, int d, double sp, double x, double y){
@@ -87,5 +90,10 @@ public class Agent {
 
     public void setPos(GeoLocation pos) {
         this.pos = pos;
+    }
+
+    @Override
+    public String toString(){
+        return "Agent id: "+this.getId()+" src_node: "+this.getSrc()+" dest_node: "+this.getDest()+" speed: "+this.getSpeed()+" pos: "+this.getPos();
     }
 }

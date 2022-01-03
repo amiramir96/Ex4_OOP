@@ -42,7 +42,7 @@ public class Menu extends JMenuBar implements ActionListener {
     DirectedWeightedGraphAlgorithms algoGraph;
     JMenu menu, runAlgo, graphToolBar; // categories
     // items for ea category
-    JMenuItem loadGraph, saveGraph;
+    JMenuItem exitGUI, loadGraph, saveGraph;
     JMenuItem isConnected, center, shortestPathDist, shortestPath, tsp;
     JMenuItem addNode, delNode, addEdge, delEdge, newDwg;
     JFileChooser fileChooser;
@@ -67,10 +67,13 @@ public class Menu extends JMenuBar implements ActionListener {
         this.menu = new JMenu("File");
         this.fileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
         // init menu items ("buttons")
+        this.exitGUI = new JMenuItem("exit");
         this.loadGraph = new JMenuItem("load graph");
         this.saveGraph = new JMenuItem("save graph");
+        this.exitGUI.addActionListener(this);
         this.loadGraph.addActionListener(this);
         this.saveGraph.addActionListener(this); // add them to the bar
+        this.menu.add(this.exitGUI);
         this.menu.add(this.loadGraph);
         this.menu.add(this.saveGraph);
 
@@ -132,7 +135,10 @@ public class Menu extends JMenuBar implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent menuClickedEvent) {
         this.funcEvent = menuClickedEvent; // just var, for more comfort usage
-        if (menuClickedEvent.getSource() == this.loadGraph) { // load graph
+        if (menuClickedEvent.getSource() == this.exitGUI){ // shut down game
+            this.drawer.exitFlag = true;
+        }
+        else if (menuClickedEvent.getSource() == this.loadGraph) { // load graph
             this.fileChooser.showOpenDialog(null);
             if (this.fileChooser.getSelectedFile() == null) {
                 return; // if nothing choosed just exit this proccess

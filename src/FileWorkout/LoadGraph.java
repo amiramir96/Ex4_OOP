@@ -2,7 +2,10 @@ package FileWorkout;
 
 import api.*;
 import director.Agent;
+import director.GameData;
 import director.Pokemon;
+import ex4_java_client.Client;
+import impGraph.DwgMagic;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -18,11 +21,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
 public class LoadGraph {
 
-    public LoadGraph(){
+    private static final double EPS = 0.000001;
+    DirectedWeightedGraph currGraph;
 
+    public LoadGraph(DirectedWeightedGraph g){
+        this.currGraph = g;
     }
     /**
      * return DEG from name
@@ -147,7 +155,7 @@ public class LoadGraph {
      * @param strJsonFile - represent json format of string of Pokemons
      * @return - list of pokemons
      */
-    public static ArrayList<Pokemon> getPokemons(String strJsonFile){
+    public ArrayList<Pokemon> getPokemons(String strJsonFile){
         // init vars and json
         JSONObject x = new JSONObject(strJsonFile);
         JSONArray pokemons = x.getJSONArray("Pokemons");
@@ -158,6 +166,7 @@ public class LoadGraph {
         String[] q;
         GeoLocation point;
         Pokemon pok;
+        EdgeData tempE; // will decide which edge that pok stands on
 
         // loop over all json objects that represent pokemons
         for (int i=0; i<pokemons.length(); i++){
@@ -168,11 +177,99 @@ public class LoadGraph {
             type = p.getInt("type");
             q = p.getString("pos").split(",");
             point = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
-            pok = new Pokemon(val, type, point);
+            tempE = checkMyEdge(point, type);
+            pok = new Pokemon(val, type, point, tempE.getSrc(), tempE.getDest());
 
             // set it into the list
             output.add(pok);
         }
         return output;
+    }
+
+    /**
+     * check which edge of the currGraph, the point stands on
+     * @param point - geo location (x,y)
+     * @return edge the point is on
+     */
+    private EdgeData checkMyEdge(GeoLocation point, int type) {
+        Iterator<EdgeData> it = this.currGraph.edgeIter();
+        EdgeData tempE=null;
+        GeoLocation srcP, destP;
+
+        while (it.hasNext()){
+            tempE = it.next();
+            srcP = this.currGraph.getNode(tempE.getSrc()).getLocation();
+            destP = this.currGraph.getNode(tempE.getDest()).getLocation();
+            double temp = Math.abs(srcP.distance(destP) - (srcP.distance(point) + destP.distance(point)));
+//            System.out.println(tempE.getSrc() +" "+ tempE.getDest()+" dist gap: "+temp +" "+EPS);
+
+            if (temp < EPS){
+//                System.out.println("found any edge?");
+//                System.out.println(tempE.getSrc() +" "+ tempE.getDest());
+                if (type < 0){ // src > dest
+                    if (tempE.getSrc() > tempE.getDest()){
+                        return tempE;
+                    }
+                    else {
+                        return this.currGraph.getEdge(tempE.getDest(), tempE.getSrc());
+                    }
+                }
+                else { // type == -1 dest > src
+                    if (tempE.getSrc() > tempE.getDest()){
+                        return this.currGraph.getEdge(tempE.getDest(), tempE.getSrc());
+                    }
+                    else {
+                        return tempE;
+                    }
+                }
+            }
+        }
+        return tempE;
+    }
+
+    public void createGameFirstTime(GameData ptr){
+        JSONObject y = new JSONObject(ptr.getCurr_client().getInfo());
+        JSONObject x = y.getJSONObject("GameServer");
+        ptr.setPokemons_size(x.getInt("pokemons"));
+        ptr.setCurr_graph(setGraph(ptr.getCurr_client().getGraph()));
+        ptr.setCurr_algo(new DwgMagic(ptr.getCurr_graph()));
+        this.currGraph = ptr.getCurr_graph();
+//        String temp = ptr.getCurr_client().getAgents();
+//        ptr.setAgents(getAgents(temp));
+        ptr.setPokemons(getPokemons(ptr.getCurr_client().getPokemons()));
+        Collections.sort(ptr.getPokemons());
+        ptr.setMoves(x.getInt("moves"));
+        ptr.setGrade(x.getInt("grade"));
+        ptr.setGame_level(x.getInt("game_level"));
+        ptr.setMax_user_level(x.getInt("max_user_level"));
+        ptr.setId(x.getInt("id"));
+        ptr.setGraph_directory(x.getString("graph"));
+        ptr.setAgents_size(x.getInt("agents"));
+        LoadGraph load = new LoadGraph(ptr.getCurr_graph());
+        ptr.setLoad(load);
+    }
+
+
+    /**
+     * update details of currect game
+     * @param ptr - pointer to gamedata object to update
+     */
+    public void updateGameData(GameData ptr, boolean flagAgent, boolean flagPok){
+        JSONObject y = new JSONObject(ptr.getCurr_client().getInfo());
+        JSONObject x = y.getJSONObject("GameServer");
+        ptr.setPokemons_size(x.getInt("pokemons"));
+        if (flagAgent){
+            ptr.setAgents(getAgents(ptr.getCurr_client().getAgents()));
+        }
+        if (flagPok){
+            ptr.setPokemons(getPokemons(ptr.getCurr_client().getPokemons()));
+        }
+        ptr.setMoves(x.getInt("moves"));
+        ptr.setGrade(x.getInt("grade"));
+        ptr.setGame_level(x.getInt("game_level"));
+        ptr.setMax_user_level(x.getInt("max_user_level"));
+        ptr.setId(x.getInt("id"));
+        ptr.setGraph_directory(x.getString("graph"));
+        ptr.setAgents_size(x.getInt("agents"));
     }
 }
