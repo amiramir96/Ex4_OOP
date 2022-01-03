@@ -145,6 +145,7 @@ public class Client {
         try {
             res1 = sendMessage("chooseNextEdge");
             if (res1.equals("getAgentAndNode")) {
+                System.out.println("my msg is: "+jsonAgentAndNode);
                 String res2 = sendMessage(jsonAgentAndNode);
             }
         } catch (IOException e) {

@@ -3,6 +3,7 @@ package ex4_java_client; /**
  * A trivial example for starting the server and running all needed commands
  */
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,6 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import director.Agent;
+import director.Executer;
 import director.GameData;
 import director.Pokemon;
 import graphics.Window;
@@ -65,7 +67,10 @@ public class StudentCode {
         currGD.self_update(true, true);
         Window windo = new Window(currGD.getCurr_algo(), currGD);
 
-
+        LinkedList<Integer> l1 = new LinkedList<>();
+        l1.addLast(2); l1.addLast(1); l1.addLast(0);
+        Executer ee = new Executer(0, l1, currGD);
+        Thread th0 = new Thread(ee);
 
 
 
@@ -93,24 +98,29 @@ public class StudentCode {
         System.out.println(isRunningStr);
 
         client.start();
+        th0.start();
 
+//        System.out.println(client.getAgents());
+//        System.out.println(client.timeToEnd());
+//        Scanner keyboard = new Scanner(System.in);
+//        System.out.println("enter the next dest: ");
+//        int next = keyboard.nextInt();
+//        client.chooseNextEdge("{\"agent_id\":0, \"next_node_id\": " + next + "}");
 
-        System.out.println(client.getAgents());
-        System.out.println(client.timeToEnd());
-        Scanner keyboard = new Scanner(System.in);
-        System.out.println("enter the next dest: ");
-        int next = keyboard.nextInt();
-        client.chooseNextEdge("{\"agent_id\":0, \"next_node_id\": " + next + "}");
-
-        while (client.isRunning().equals("true")) {
+        while (true) {
             try{
                 Thread.sleep(10);
             }
             catch (Exception e){
                 e.printStackTrace();
             }
-            client.move();
-            currGD.self_update(true, true);
+            if (client.isRunning().equals("true")){
+                client.move();
+                currGD.self_update(true, true);
+            }
+            else {
+                break;
+            }
         }
 
         // set here "join" to all threads.

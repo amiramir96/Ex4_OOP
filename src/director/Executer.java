@@ -1,5 +1,7 @@
 package director;
 
+import api.EdgeData;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,12 +37,18 @@ public class Executer implements Runnable{
             return 0;
         }
         else {
-            if (this.next_stations.isEmpty()){
+            if (this.next_stations == null || this.next_stations.isEmpty()){
                 return 0;
             }
             int src = this.x.getSrc();
             int dest = this.next_stations.getFirst();
-            return gd.getCurr_graph().getEdge(src, dest).getWeight()/this.x.getSpeed();
+            EdgeData tempE = gd.getCurr_graph().getEdge(src, dest);
+            if (tempE == null){
+                return 0;
+            }
+            else {
+                return tempE.getWeight()/this.x.getSpeed();
+            }
         }
     }
 
@@ -72,7 +80,7 @@ public class Executer implements Runnable{
                 try { // engage the agent to his next stop
                     this.x = this.gd.getAgents().get(agent_id);
                     // "{\"agent_id\":" + id + ", \"next_node_id\": " + dest + "}"
-                    this.gd.getCurr_client().chooseNextEdge("{\"agent_id\":"+ this.agent_id +", \"next_node_id\": " + this.getNext_stations().getFirst());
+                    this.gd.getCurr_client().chooseNextEdge("{\"agent_id\":" + agent_id + ", \"next_node_id\": " + this.getNext_stations().getFirst() + "}");
                     this.getNext_stations().removeFirst();
                     Thread.sleep((long) (t*1000));
                 }
