@@ -114,6 +114,13 @@ public class DwgMagic implements DirectedWeightedGraphAlgorithms {
         return dijObj.shortestToSpecificNode(this.currGraph.getNode(dest));
     }
 
+    public double shortestPathDistTranspose(int src, int dest) {
+        Dijkstra dijObj = new Dijkstra(this.currGraph, this.currGraph.getNode(src));
+        dijObj.mapPathDijkstraTranspose(this.currGraph.getNode(src)); // dijkstra algo main proccess
+        return dijObj.shortestToSpecificNode(this.currGraph.getNode(dest));
+    }
+
+
     /**
      * use once dijkstra but now we memorize parents of ea node
      * cost more memory but time run is same as dijkstra
@@ -335,6 +342,137 @@ public class DwgMagic implements DirectedWeightedGraphAlgorithms {
         return minDest; // -1 for no ans, positive int for node_id
     }
 
+    /**
+     * TSP_B is the upgraded algorithm for tsp from our python project, copied as is to java for better results.
+     * Finds the shortest path that visits all the nodes in the list
+     * :param node_lst: A list of nodes id's
+     * algorithm name - "double ganger":
+     * always compare between two sides of the road ^^
+     * phases:
+     * first of all - add first node from the node_lst to the ans list
+     * loop over len(remaining nodes) times and:
+     * 1. use dijkstra on the last node of the ans_list
+     * 2. use transpose_dijkstra on the first node of the ans_list
+     * 3. compare between outputs of 1 and 2, choose the shortest path to one of the remaining nodes
+     * 4. add the chosen path to ans_list
+     * 5. if we came into dead end (no ans to both dijkstras) - break and return (None, float('inf'))
+     * 6. return to point (1.)
+     * note: if there is more than 3 diff strongly components in the graph and they r connected within one direction of edges - there is no ans absolutely
+     * @param cities
+     * @return - A list of the nodes id's in the path, and the overall distance
+     */
+    public List<NodeData> TSP_B(List<NodeData> cities){
+        // init
+        int first_node = cities.get(0).getKey();
+        LinkedList<Integer> remaining_list = new LinkedList<>();
+        // copy cities to inner list
+        for (NodeData n : cities){
+            remaining_list.addLast(n.getKey());
+        }
+        LinkedList<NodeData> ans_list = new LinkedList<>();
+
+        ans_list.add(this.currGraph.getNode(remaining_list.getFirst())); // add first item to answer list
+        remaining_list.removeFirst(); // remove from remaining since we added item to the ans_list
+        double total_dist = 0;
+        int flag = -1;
+        LinkedList<Integer> exception_node = new LinkedList<>();
+        int leng = remaining_list.size();
+
+        List<NodeData> forward_list;
+        double forward_dist;
+        List<NodeData> backward_list;
+        double backward_dist;
+
+        Dijkstra dij = null;
+        Dijkstra transDij = null;
+        // iterate over all the remaining list objects, once ea node
+        while (!remaining_list.isEmpty()){
+            // phase 1,2
+            if (flag == 1){
+                dij = new Dijkstra(this.currGraph, ans_list.getLast());
+                dij.mapPathDijkstra(ans_list.getLast());
+            }
+            else if (flag == 0){
+                transDij = new Dijkstra(this.currGraph, ans_list.getFirst());
+                transDij.mapPathDijkstraTranspose(ans_list.getFirst());
+            }
+            else {
+                dij = new Dijkstra(this.currGraph, ans_list.getLast());
+                dij.mapPathDijkstra(ans_list.getLast());
+
+                transDij = new Dijkstra(this.currGraph, ans_list.getFirst());
+                transDij.mapPathDijkstraTranspose(ans_list.getFirst());
+            }
+
+            forward_list = dij.nearest_neighbour(remaining_list, exception_node);
+            backward_list = transDij.nearest_neighbour(remaining_list, exception_node);
+
+            if (forward_list == null){
+                forward_dist = Double.POSITIVE_INFINITY;
+            }
+            else {
+                forward_dist = shortestPathDist(dij.src.getKey(), forward_list.get(forward_list.size()-1).getKey());
+            }
+            if (backward_list == null){
+                backward_dist = Double.POSITIVE_INFINITY;
+            }
+            else {
+                backward_dist = shortestPathDistTranspose(transDij.src.getKey(), backward_list.get(backward_list.size()-1).getKey());
+
+            }
+            // phase 3
+
+            if (forward_dist > backward_dist){
+                if (backward_list == null){
+                    break;
+                }
+                // phase 4
+                Collections.reverse(backward_list);
+                remaining_list.removeAll(List.of(backward_list.get(0).getKey()));
+                backward_list.remove(backward_list.size()-1);
+                backward_list.addAll(ans_list);
+                ans_list = (LinkedList<NodeData>) backward_list;
+                total_dist += backward_dist;
+                // process to avoid from double dijkstra for every iteration - implemantation issue
+                if (flag == 1){
+                    exception_node = new LinkedList<>();
+                    exception_node.add(ans_list.getFirst().getKey());
+                }
+                else {
+                    exception_node.addLast(ans_list.getFirst().getKey());
+                }
+                flag = 0;
+            }
+            else {
+                if (forward_list == null){
+                    break;
+                }
+                // phase 4
+                remaining_list.removeAll(List.of(forward_list.get(forward_list.size()-1).getKey()));
+                forward_list.remove(0);
+                ans_list.addAll(forward_list);
+                total_dist += forward_dist;
+
+                // process to avoid from double dijkstra for every iteration - implemantation issue
+                if (flag == 0){
+                    exception_node = new LinkedList<>();
+                    exception_node.add(ans_list.getLast().getKey());
+                }
+                else {
+                    exception_node.addLast(ans_list.getLast().getKey());
+                }
+                flag = 1;
+            }
+        }
+
+        if (remaining_list.size() > 0){
+            // point 5. -> no ans :/
+            return null;
+        }
+        else {
+            return ans_list;
+        }
+    }
 
     /**
      * if failed to save, the program will "explode"

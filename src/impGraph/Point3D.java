@@ -9,18 +9,16 @@ import api.GeoLocation;
  */
 
 public class Point3D implements GeoLocation {
-    double _x, _y, _z;
+    double _x, _y;
 
     /**
      * constructor
      * @param x - cord
      * @param y - cord
-     * @param z - cord
      */
-    public Point3D(double x, double y, double z) {
+    public Point3D(double x, double y) {
         this._x = x;
         this._y = y;
-        this._z = z;
     }
 
     /**
@@ -30,7 +28,6 @@ public class Point3D implements GeoLocation {
     public Point3D(GeoLocation location) {
         this._x = location.x();
         this._y = location.y();
-        this._z = location.z();
     }
     // getters
     @Override
@@ -41,11 +38,6 @@ public class Point3D implements GeoLocation {
     @Override
     public double y() {
         return this._y;
-    }
-
-    @Override
-    public double z() {
-        return this._z;
     }
 
     /**

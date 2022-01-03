@@ -26,7 +26,7 @@ class BFSTest {
         NodeData n1 = g1.nodeIter().next();
         assertTrue(dfs.mainProcessIsConnected(n1));
         // disconnect the graph
-        Point3D p1 = new Point3D(0,0,0);
+        Point3D p1 = new Point3D(0,0);
         Node n2 = new Node(p1,20);
         g1.addNode(n2);
         assertFalse(dfs.mainProcessIsConnected(n1));

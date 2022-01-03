@@ -91,7 +91,7 @@ class DwgTest {
     @Test
     void addNode() {
         int num_of_nodes= dwg.nodeSize();
-        Point3D p1 = new Point3D(0,0,0);
+        Point3D p1 = new Point3D(0,0);
         Node n1 = new Node(p1,17);
         dwg.addNode(n1);
         assertEquals(num_of_nodes+1, dwg.nodeSize());
@@ -148,7 +148,7 @@ class DwgTest {
     @Test
     void removeNode() {
         Dwg dwg = getGraph("json_graphs\\G1.json"); //initialize graph
-        Point3D p1 = new Point3D(0,0,0);
+        Point3D p1 = new Point3D(0,0);
         Node n1 = new Node(p1,17);
         dwg.addNode(n1);
         dwg.connect(17,1,0.4);
@@ -169,7 +169,7 @@ class DwgTest {
     @Test
     void nodeSize() {
         assertEquals(17, dwg.nodeSize());
-        Point3D p1 = new Point3D(0,0,0);
+        Point3D p1 = new Point3D(0,0);
         Node n1 = new Node(p1,17);
         dwg.addNode(n1);
         assertEquals(18, dwg.nodeSize());
@@ -178,7 +178,7 @@ class DwgTest {
     @Test
     void edgeSize() {
         int num_of_edges = dwg.edgeSize();
-        Point3D p1 = new Point3D(0,0,0);
+        Point3D p1 = new Point3D(0,0);
         Node n1 = new Node(p1,17);
         dwg.addNode(n1);
         dwg.connect(17, 1, 12);
@@ -194,7 +194,7 @@ class DwgTest {
         //how many insertions when building graph?
         int insertions = dwg.edgeSize()+ dwg.nodeSize();
         assertEquals(insertions, dwg.getMC());
-        Point3D p1 = new Point3D(0,0,0);
+        Point3D p1 = new Point3D(0,0);
         Node n1 = new Node(p1,17);
         dwg.addNode(n1);
         assertEquals(insertions+1, dwg.getMC());

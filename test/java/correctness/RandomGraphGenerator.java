@@ -34,7 +34,7 @@ public class RandomGraphGenerator {
             //range: -nodes_size/2 to nodes_size/2
             double x_coordinate= (-nodes_size/2.0)+(nodes_size* rnd.nextDouble());
             double y_coordinate= (-nodes_size/2.0)+(nodes_size* rnd.nextDouble());
-            Point3D p = new Point3D(x_coordinate, y_coordinate, 0.0);
+            Point3D p = new Point3D(x_coordinate, y_coordinate);
             nodes.add(new Node(p, i));// create new node
             //System.out.println(x_coordinate+","+ y_coordinate);
         }

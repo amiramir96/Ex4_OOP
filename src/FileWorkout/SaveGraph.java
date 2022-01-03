@@ -65,9 +65,9 @@ public class SaveGraph {
     public static JsonObject NodeToObject(NodeData node){
         double node_x= node.getLocation().x();
         double node_y= node.getLocation().y();
-        double node_z= node.getLocation().z();
+//        double node_z= node.getLocation().z();
         JsonObject obj = new JsonObject();
-        obj.addProperty("pos", node_x+","+node_y+","+node_z);
+        obj.addProperty("pos", node_x+","+node_y);
         obj.addProperty("id", node.getKey());
         return obj;
     }

@@ -64,7 +64,6 @@ public class Node implements NodeData {
     public void setLocation(GeoLocation p) {
         this.cord._x = p.x();
         this.cord._y = p.y();
-        this.cord._z = p.z();
     }
 
     /**

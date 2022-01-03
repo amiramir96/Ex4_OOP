@@ -389,7 +389,7 @@ public class Menu extends JMenuBar implements ActionListener {
                             if (str.length > 3 || algoGraph.getGraph().getNode(Integer.parseInt(str[0])) != null){
                                 invalidInput();
                             }
-                            algoGraph.getGraph().addNode(new Node(new Point3D(Double.parseDouble(str[1]), Double.parseDouble(str[2]), 0.0), Integer.parseInt(str[0])));
+                            algoGraph.getGraph().addNode(new Node(new Point3D(Double.parseDouble(str[1]), Double.parseDouble(str[2])), Integer.parseInt(str[0])));
                             algoGraph.init(algoGraph.getGraph());
                             drawer.updateDrawer(algoGraph);
                         }

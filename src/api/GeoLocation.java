@@ -6,6 +6,5 @@ package api;
 public interface GeoLocation {
     public double x();
     public double y();
-    public double z();
     public double distance(GeoLocation g);
 }

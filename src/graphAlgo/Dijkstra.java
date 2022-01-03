@@ -91,14 +91,74 @@ public class Dijkstra{
                 if (this.visitMap.get(KeyTransform(dest_id)).get(dest_id)){continue;} // if visited x, isnt relevant anymore
 
                 newDist = this.distMap.get(KeyTransform(node_id)).get(node_id) + tempE.getWeight(); // path from src to "x" + path from "x" to "y"
-                if (newDist < this.distMap.get(KeyTransform(dest_id)).get(tempE.getDest())){ // switch only for better path
-                    this.prevMap.get(KeyTransform(dest_id)).replace(tempE.getDest(), node_id);
-                    this.distMap.get(KeyTransform(dest_id)).replace(tempE.getDest(), newDist);
+                if (newDist < this.distMap.get(KeyTransform(dest_id)).get(dest_id)){ // switch only for better path
+                    this.prevMap.get(KeyTransform(dest_id)).replace(dest_id, node_id);
+                    this.distMap.get(KeyTransform(dest_id)).replace(dest_id, newDist);
                     minHeap.add(dest_id);
                 }
             }
         }
     }
+
+    /**
+     * given Directed Wieghted graph that isConnected with |V| nodes and |E| edges
+     * dijkstra algo via: https://www.youtube.com/watch?v=pSqmAO-m7Lk || https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+     * using regular priority queue(binomal min heap)
+     * running time O(|E|log|V| + |V|log|V|)
+     * Use Nodes weight field to save the distance from src, resetting in the end of the algo run
+     * @param src - the given node which we want to know all shortest path to every other node
+     */
+    public void mapPathDijkstraTranspose(NodeData src){
+        // initialize priority queue, visit - boolean, distance - double arrays
+        Iterator <NodeData> itNode = this.currGraph.nodeIter();
+        int key;
+        while (itNode.hasNext()){
+            key = itNode.next().getKey();
+            this.prevMap.get(KeyTransform(key)).put(key, -1);
+            this.distMap.get(KeyTransform(key)).put(key, Double.POSITIVE_INFINITY);
+            this.visitMap.get(KeyTransform(key)).put(key, false);
+        }
+        // credit stack overflow https://stackoverflow.com/questions/2555284/java-priority-queue-with-a-custom-anonymous-comparator
+        // compare through id ("serial number")
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>(2 * distMap.size(), (o1, o2) -> { // credit to yuval bobnovsky to guide us to fix bug via using epsilon param
+            if (Math.abs(distMap.get(KeyTransform(o1)).get(o1) - distMap.get(KeyTransform(o2)).get(o2)) < 1e-32){
+                return 0;
+            }
+            else {
+                return distMap.get(KeyTransform(o1)).get(o1) - distMap.get(KeyTransform(o2)).get(o2) > 0 ? +1 : -1;
+            }
+        });
+
+        // init the src node to be distance 0 and add it to our priority queue
+        this.distMap.get(KeyTransform(src.getKey())).replace(src.getKey(), 0.0);
+        minHeap.add(src.getKey());
+
+        // init vars
+        int node_id;
+        double newDist;
+        EdgeData tempE;
+        // "dijkstra" algorithm
+        while(!minHeap.isEmpty()){
+            // out loop, run over the heap till its empty (will be empty only after visited at all the nodes)
+            node_id = minHeap.poll(); // given Node "x"
+            this.visitMap.get(KeyTransform(node_id)).replace(node_id, true);
+            // inner loop - move to all the neighbors of "x" via iterating all over the given node OUT edges
+            Iterator<EdgeData> itEdge = this.currGraph.edgeIterIn(node_id);
+            while (itEdge != null && itEdge.hasNext()){
+                tempE = itEdge.next(); // Edge from "x" to "y"
+                int dest_id = tempE.getSrc();
+                if (this.visitMap.get(KeyTransform(dest_id)).get(dest_id)){continue;} // if visited x, isnt relevant anymore
+
+                newDist = this.distMap.get(KeyTransform(node_id)).get(node_id) + tempE.getWeight(); // path from src to "x" + path from "x" to "y"
+                if (newDist < this.distMap.get(KeyTransform(dest_id)).get(dest_id)){ // switch only for better path
+                    this.prevMap.get(KeyTransform(dest_id)).replace(dest_id, node_id);
+                    this.distMap.get(KeyTransform(dest_id)).replace(dest_id, newDist);
+                    minHeap.add(dest_id);
+                }
+            }
+        }
+    }
+
 
     private int KeyTransform(int id) {return id%1000;}
 
@@ -134,6 +194,9 @@ public class Dijkstra{
      * @return - shortestPath represented as List
      */
     public List<NodeData> shortestPathList(NodeData dest){
+        if (dest == null){
+            return null;
+        }
         // get the prevMap from the pathDijkstra algo
         LinkedList<NodeData> outputPath = new LinkedList<>(); // output list
         if (this.prevMap.get(KeyTransform(dest.getKey())).get(dest.getKey()) == -1) { return outputPath; } // -1 == not exist, both nodes is not connected
@@ -145,4 +208,49 @@ public class Dijkstra{
 //        outputPath.removeFirst(); // remove the parent of src which is null
         return outputPath;
     }
+
+    /**
+     * for tcp
+     * @param neighbours - all the relevant nodes to be neighbours
+     * @param exception_list - nodes which forbidden to choose as "nearest neighbour" of the remaining list
+     * @return parents list from src to the nearest node from neighbours list, return null if not exist even one.
+     */
+    public List<NodeData> nearest_neighbour(List<Integer> neighbours, List<Integer> exception_list){
+        Double minDist = Double.POSITIVE_INFINITY;
+        int node_id = -1;
+        // choose the nearest node from the list
+        neighbours.removeAll(List.of(this.src.getKey()));
+        for (Integer x : neighbours){
+            if (minDist > this.distMap.get(KeyTransform(x)).get(x) && (exception_list == null || !exception_list.contains(x))){
+                minDist = this.distMap.get(KeyTransform(x)).get(x);
+                node_id = x;
+
+            }
+        }
+        if (neighbours.isEmpty()){
+            return null;
+        }
+        return shortestPathList(this.currGraph.getNode(node_id));
+    }
+
+
+//    /**
+//     * return parentsList
+//     */
+//    public List<Integer>parentsList(int dest){
+//        LinkedList<Integer> parents_list = new LinkedList<>();
+//        int curr_node = dest;
+//        while (curr_node != -1 && curr_node != this.src.getKey()){
+//            parents_list.addFirst(curr_node);
+//            curr_node = this.prevMap.get(KeyTransform(dest)).get(dest);
+//        }
+//
+//        if ((curr_node == this.src.getKey() || curr_node == -1) && distMap.get(KeyTransform(dest)).get(dest) < Double.POSITIVE_INFINITY){
+//            parents_list.addFirst(this.src.getKey());
+//            return parents_list;
+//        }
+//        else {
+//            return null;
+//        }
+//    }
 }

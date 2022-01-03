@@ -24,7 +24,7 @@ public class PerformanceTest {
         long start = System.nanoTime();
         DirectedWeightedGraph g = new Dwg();
         for (int i=0; i < param; i++){
-            g.addNode(new Node(new Point3D(Math.random()*100, Math.random()*100,0.0), i));
+            g.addNode(new Node(new Point3D(Math.random()*100, Math.random()*100), i));
         }
         for (int i=0; i < param; i++){
             for (int j=0; j < 20; j++){

@@ -55,7 +55,7 @@ class DwgMagicTest {
     @Test
     void isConnected() {
         assertTrue(dm.isConnected());
-        Point3D p1 = new Point3D(0,0,0);
+        Point3D p1 = new Point3D(0,0);
         Node n1 = new Node(p1,20);
         // add new node
         dm.getGraph().addNode(n1);
@@ -70,9 +70,9 @@ class DwgMagicTest {
             e.printStackTrace();
         }
         dm.init(g1);
-        Point3D p1 = new Point3D(0,0,0);
+        Point3D p1 = new Point3D(0,0);
         Node n1 = new Node(p1,20);
-        Point3D p2 = new Point3D(3,4,0);
+        Point3D p2 = new Point3D(3,4);
         Node n2 = new Node(p2,21);
         //add nodes
         dm.getGraph().addNode(n1);
@@ -91,9 +91,9 @@ class DwgMagicTest {
             e.printStackTrace();
         }
         dm.init(g1);
-        Point3D p1 = new Point3D(0,0,0);
+        Point3D p1 = new Point3D(0,0);
         Node n1 = new Node(p1,20);
-        Point3D p2 = new Point3D(3,4,0);
+        Point3D p2 = new Point3D(3,4);
         Node n2 = new Node(p2,21);
         //add nodes
         dm.getGraph().addNode(n1);
@@ -117,6 +117,7 @@ class DwgMagicTest {
         dm.init(g1);
         assertEquals(0, dm.center().getKey());
     }
+
 
     @Test
     void tsp() {
@@ -166,6 +167,68 @@ class DwgMagicTest {
     }
 
     @Test
+    void TSP_B() {
+        DwgMagic m = new DwgMagic(new Dwg());
+        DirectedWeightedGraph g;
+        m.load("json_graphs\\G1.json");
+        g = m.getGraph();
+        List<NodeData> l1 = new LinkedList<>();
+        l1.add(g.getNode(9));
+        l1.add(g.getNode(2));
+        l1.add(g.getNode(7));
+        l1 = m.TSP_B(l1);
+        assertEquals(l1.get(0).getKey(), 2);
+        assertEquals(l1.get(1).getKey(), 6);
+        assertEquals(l1.get(2).getKey(), 7);
+        assertEquals(l1.get(3).getKey(), 8);
+        assertEquals(l1.get(4).getKey(), 9);
+
+        assertEquals(l1.size(), 5);
+
+        m.load("json_graphs\\G3.json");
+        g = m.getGraph();
+        LinkedList<NodeData> l2 = new LinkedList<>();
+        l2.add(g.getNode(0));
+        l2.addLast(g.getNode(2));
+        l2.addLast(g.getNode(4));
+        l2.addLast(g.getNode(6));
+        l2.addLast(g.getNode(8));
+        List<NodeData>l3 = m.TSP_B(l2);
+        double total = 0;
+        for (int i=0; i < l3.size()-1; i++){
+            total += m.shortestPathDist(l3.get(i).getKey(), l3.get(i+1).getKey());
+        }
+        assertEquals(total, 7.503729445849754);
+
+
+        l1 = new LinkedList<>();
+        // 21,24,14,3,10,7
+        l1.add(g.getNode(21));
+        l1.add(g.getNode(24));
+        l1.add(g.getNode(14));
+        l1.add(g.getNode(3));
+        l1.add(g.getNode(10));
+        l1.add(g.getNode(7));
+        l1 = m.TSP_B(l1);
+        assertEquals(l1.get(0).getKey(), 7);
+        assertEquals(l1.get(1).getKey(), 10);
+        assertEquals(l1.get(2).getKey(), 12);
+        assertEquals(l1.get(3).getKey(), 3);
+        assertEquals(l1.get(4).getKey(), 13);
+        assertEquals(l1.get(5).getKey(), 14);
+        assertEquals(l1.get(6).getKey(), 29);
+        assertEquals(l1.get(7).getKey(), 30);
+        assertEquals(l1.get(8).getKey(), 31);
+        assertEquals(l1.get(9).getKey(), 24);
+        assertEquals(l1.get(10).getKey(), 31);
+        assertEquals(l1.get(11).getKey(), 32);
+        assertEquals(l1.get(12).getKey(), 21);
+        assertEquals(l1.size(), 13);
+
+
+    }
+
+    @Test
     void save() {
         try {
             g1 = LoadGraph.loadGraph("json_graphs\\GShfiut.json");
@@ -174,7 +237,7 @@ class DwgMagicTest {
         }
         dm.init(g1);
         int num_of_nodes = g1.nodeSize();
-        Point3D p1 = new Point3D(0,0,0);
+        Point3D p1 = new Point3D(0,0);
         Node n1 = new Node(p1,20);
         dm.getGraph().addNode(n1);// add new node
         dm.save("json_graphs\\saved_graph.json");

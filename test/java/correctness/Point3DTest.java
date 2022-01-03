@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class Point3DTest {
 
-    Point3D p1 = new Point3D(0,0,0);
-    Point3D p2 = new Point3D(3,4,0);
+    Point3D p1 = new Point3D(0,0);
+    Point3D p2 = new Point3D(3,4);
 
 
     @Test
@@ -21,12 +21,6 @@ class Point3DTest {
     void y() {
         assertEquals(0,p1.y());
         assertEquals(4,p2.y());
-    }
-
-    @Test
-    void z() {
-        assertEquals(0,p1.z());
-        assertEquals(0,p2.z());
     }
 
     @Test
