@@ -104,14 +104,13 @@ public class StudentCode {
 
         while (client.isRunning().equals("true")) {
             try{
-                Thread.sleep(2000);
+                Thread.sleep(10);
             }
             catch (Exception e){
                 e.printStackTrace();
             }
             client.move();
             currGD.self_update(true, true);
-            System.out.println(currGD.getCurr_client().getPokemons());
         }
 
         // set here "join" to all threads.
