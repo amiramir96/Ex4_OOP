@@ -71,6 +71,11 @@ public class Executer implements Runnable{
         double temp = 0;
         int src, dest;
 
+        x = this.gd.getAgents().get(agent_id);
+        EdgeData tempE =  this.currGraph.getEdge(x.getSrc(), this.next_stations.getFirst());
+        if (tempE != null){
+            temp += tempE.getWeight();
+        }
         for (int i=0; i < this.next_stations.size()-1; i++){
             // loop over all the tasks and updated the time for that
             src = this.next_stations.get(i);
