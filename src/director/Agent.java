@@ -17,7 +17,7 @@ public class Agent {
     int dest;
     double speed;
     GeoLocation pos;
-    /**
+        /**
      * constructor
      */
     public Agent(int ID, double v, int s, int d, double sp, GeoLocation p){

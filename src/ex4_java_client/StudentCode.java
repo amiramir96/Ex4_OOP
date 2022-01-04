@@ -115,7 +115,7 @@ public class StudentCode {
 //        }
 
 //        System.out.println(client.getAgents());
-//        System.out.println(client.timeToEnd());
+        System.out.println(client.timeToEnd());
 //        Scanner keyboard = new Scanner(System.in);
 //        System.out.println("enter the next dest: ");
 //        int next = keyboard.nextInt();
@@ -136,24 +136,18 @@ public class StudentCode {
             }
             if (client.isRunning().equals("true")) {
                 synchronized (client) {
-//                    synchronized (currGD) {
                         if (iterates == 10) {
-//                            System.out.println("synced for main and move");
-//                        System.out.println("ordered move");
                             client.move();
                             iterates = 0;
-//                    }
                             currGD.self_update(true, true);
                             //-----------------------------------------------------------------------------------
                             /** HERE GONNA BE the BRAIN Process that decides which agent engage which pokemon*/
                             for (Executer ex : executers) {
-//                    System.out.println("im exec of agent: "+ex.getAgent_id());
                                 ex.selfUpdateTimeToEndAll(currGD.getAgents().get(ex.getAgent_id()).getSpeed());
                             }
                             tempFreePokemons = currGD.getFreePokemons();
                             speeds = updateSpeeds(currGD.getAgents());
                             for (Pokemon poki : tempFreePokemons) {
-//                    System.out.println(poki);
                                 for (Agent agent : currGD.getAgents()) {
                                     if (executers.get(agent.getId()).getNext_stations() == null || executers.get(agent.getId()).getNext_stations().isEmpty()) {
                                         n = currGD.getCurr_graph().getNode(agent.getSrc());
@@ -177,28 +171,24 @@ public class StudentCode {
                                 times = new double[executers.size()];
                                 poki.setEngaged(true);
                             }
+
                             for (Thread th : threads){
                                 th.run();
-//                                System.out.println("?");
                             }
+                            // set here "join" to all threads.
                             for (Thread th : threads){
                                 try{
                                     th.join();
-//                                    System.out.println("??");
                                 }
                                 catch (Exception e){
                                     e.printStackTrace();
                                 }
                             }
-//                            System.out.println("???");
                         }
-////                        System.out.println();
 //                        //-----------------------------------------------------------------------------------
                         else {
-//                            System.out.println("synced for main but without move ");
                             currGD.self_update(true, true);
                         }
-//                    }
                 }
             }
             else {
@@ -206,9 +196,10 @@ public class StudentCode {
             }
             iterates++;
         }
-
-        // set here "join" to all threads.
-
+        if (client.isRunning().equals("true")){
+            client.stop();
+        }
+        windo.closeWindow();
     }
 
     private static double[] updateSpeeds(List<Agent> agents) {

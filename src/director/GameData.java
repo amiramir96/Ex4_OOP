@@ -115,6 +115,7 @@ public class GameData{
     public List<Pokemon> getPokemons() {
         return pokemons;
     }
+
     public List<Pokemon> getFreePokemons(){
         LinkedList<Pokemon> output = new LinkedList<>();
         for (Pokemon poki : this.pokemons){

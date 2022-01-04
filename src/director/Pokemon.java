@@ -9,7 +9,7 @@ public class Pokemon implements Comparable{
     GeoLocation pos;
     int id; // decides which type of pokemon it is :)
     int src, dest; // which edge the pokemon stands on
-    boolean engaged;
+    boolean engaged; // engaged to an agent already
     double mark;
 
     public Pokemon(double v, int t, GeoLocation p, int src, int dest){
