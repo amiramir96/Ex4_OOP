@@ -1,9 +1,6 @@
-package FileWorkout;
+package director;
 
 import api.*;
-import director.Agent;
-import director.GameData;
-import director.Pokemon;
 import impGraph.DwgMagic;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,7 +10,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import impGraph.Dwg;
 import impGraph.Node;
-import impGraph.Point3D;
+import impGraph.Point2D;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,7 +60,7 @@ public class Loader {
             pointsCor = nodeJsonObj.get("pos").getAsString().split(",");
             // construct the Node and add it to the output list
             tempId = nodeJsonObj.get("id").getAsInt();
-            newGraph.addNode(new Node(new Point3D(Double.parseDouble(pointsCor[0]), Double.parseDouble(pointsCor[1])), tempId));
+            newGraph.addNode(new Node(new Point2D(Double.parseDouble(pointsCor[0]), Double.parseDouble(pointsCor[1])), tempId));
         }
         JsonObject edgeJsonObj; // temporary var
         for (JsonElement edge : arrOfEdges){
@@ -97,7 +94,7 @@ public class Loader {
             p[0] = Double.parseDouble(q[0]);
             p[1] = Double.parseDouble(q[1]);
             id = node.getInt("id");
-            g.addNode(new Node(new Point3D(p[0], p[1]), id));
+            g.addNode(new Node(new Point2D(p[0], p[1]), id));
         }
 
         // create real edges and add them to the graph
@@ -146,7 +143,7 @@ public class Loader {
                 dest = a.getInt("dest");
                 speed = a.getDouble("speed");
                 q = a.getString("pos").split(",");
-                pos = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
+                pos = new Point2D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
                 // set it into the list
                 output.add(new Agent(id, value, src, dest, speed, pos));
             }
@@ -164,7 +161,7 @@ public class Loader {
                 dest = a.getInt("dest");
                 speed = a.getDouble("speed");
                 q = a.getString("pos").split(",");
-                pos = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
+                pos = new Point2D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
                 agen = list.get(i);
                 agen.setPos(pos);
                 agen.setSpeed(speed);
@@ -204,7 +201,7 @@ public class Loader {
             val = p.getDouble("value");
             type = p.getInt("type");
             q = p.getString("pos").split(",");
-            point = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
+            point = new Point2D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
             tempE = checkMyEdge(point, type);
             pok = new Pokemon(val, type, point, tempE.getSrc(), tempE.getDest());
 
@@ -351,7 +348,7 @@ public class Loader {
             val = p.getDouble("value");
             type = p.getInt("type");
             q = p.getString("pos").split(",");
-            point = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
+            point = new Point2D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
 
             for (Pokemon poki : list){
                 // check if existing at the pokemon list

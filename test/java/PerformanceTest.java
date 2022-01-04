@@ -4,7 +4,7 @@ import correctness.RandomGraphGenerator;
 import impGraph.Dwg;
 import impGraph.DwgMagic;
 import impGraph.Node;
-import impGraph.Point3D;
+import impGraph.Point2D;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +24,7 @@ public class PerformanceTest {
         long start = System.nanoTime();
         DirectedWeightedGraph g = new Dwg();
         for (int i=0; i < param; i++){
-            g.addNode(new Node(new Point3D(Math.random()*100, Math.random()*100), i));
+            g.addNode(new Node(new Point2D(Math.random()*100, Math.random()*100), i));
         }
         for (int i=0; i < param; i++){
             for (int j=0; j < 20; j++){

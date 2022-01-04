@@ -1,6 +1,5 @@
 package director;
 
-import FileWorkout.Loader;
 import api.DirectedWeightedGraph;
 import api.DirectedWeightedGraphAlgorithms;
 import ex4_java_client.Client;

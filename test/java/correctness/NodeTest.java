@@ -1,15 +1,15 @@
 package correctness;
 
 import impGraph.Node;
-import impGraph.Point3D;
+import impGraph.Point2D;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class NodeTest {
 
-    Point3D p1 = new Point3D(0,0);
-    Point3D p2 = new Point3D(3,4);
+    Point2D p1 = new Point2D(0,0);
+    Point2D p2 = new Point2D(3,4);
 
     Node n1 = new Node(p1,1);
     Node n2 = new Node(p1,2);

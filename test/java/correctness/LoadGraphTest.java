@@ -1,6 +1,6 @@
 package correctness;
 
-import FileWorkout.Loader;
+import director.Loader;
 import api.DirectedWeightedGraph;
 import org.junit.jupiter.api.Test;
 

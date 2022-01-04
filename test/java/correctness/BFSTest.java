@@ -1,11 +1,11 @@
 package correctness;
 
-import FileWorkout.Loader;
+import director.Loader;
 import api.DirectedWeightedGraph;
 import api.NodeData;
 import graphAlgo.BFS;
 import impGraph.Node;
-import impGraph.Point3D;
+import impGraph.Point2D;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
@@ -26,7 +26,7 @@ class BFSTest {
         NodeData n1 = g1.nodeIter().next();
         assertTrue(dfs.mainProcessIsConnected(n1));
         // disconnect the graph
-        Point3D p1 = new Point3D(0,0);
+        Point2D p1 = new Point2D(0,0);
         Node n2 = new Node(p1,20);
         g1.addNode(n2);
         assertFalse(dfs.mainProcessIsConnected(n1));

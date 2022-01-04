@@ -1,9 +1,7 @@
 package director;
 
 import api.GeoLocation;
-import impGraph.Point3D;
-
-import java.util.List;
+import impGraph.Point2D;
 
 /**
  * This class represents
@@ -11,14 +9,17 @@ import java.util.List;
  * @author boaz.benmoshe
  */
 public class Agent {
-    int id;
-    double value;
+    // fields of agents - pretty basic
+    int id; // serial
+
+    // the below fields is always updating!
+    double value; // sum val of pokemons agent catched
     int src;
     int dest;
     double speed;
     GeoLocation pos;
-        /**
-     * constructor
+    /**
+     * constructors
      */
     public Agent(int ID, double v, int s, int d, double sp, GeoLocation p){
         this.id = ID;
@@ -36,7 +37,7 @@ public class Agent {
         this.src = s;
         this.dest = d;
         this.speed = sp;
-        this.pos = new Point3D(x, y);
+        this.pos = new Point2D(x, y);
     }
     public Agent(){
         this.src = 0;
@@ -44,6 +45,7 @@ public class Agent {
         this.speed = 1;
     }
 
+    /** ---------------------------------- GETTERS AND SETTERS----------------------------------------*/
     public int getId() {
         return id;
     }

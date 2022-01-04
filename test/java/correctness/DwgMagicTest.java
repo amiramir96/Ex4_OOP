@@ -1,12 +1,12 @@
 package correctness;
 
-import FileWorkout.Loader;
+import director.Loader;
 import api.DirectedWeightedGraph;
 import api.NodeData;
 import impGraph.Dwg;
 import impGraph.DwgMagic;
 import impGraph.Node;
-import impGraph.Point3D;
+import impGraph.Point2D;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
@@ -55,7 +55,7 @@ class DwgMagicTest {
     @Test
     void isConnected() {
         assertTrue(dm.isConnected());
-        Point3D p1 = new Point3D(0,0);
+        Point2D p1 = new Point2D(0,0);
         Node n1 = new Node(p1,20);
         // add new node
         dm.getGraph().addNode(n1);
@@ -70,9 +70,9 @@ class DwgMagicTest {
             e.printStackTrace();
         }
         dm.init(g1);
-        Point3D p1 = new Point3D(0,0);
+        Point2D p1 = new Point2D(0,0);
         Node n1 = new Node(p1,20);
-        Point3D p2 = new Point3D(3,4);
+        Point2D p2 = new Point2D(3,4);
         Node n2 = new Node(p2,21);
         //add nodes
         dm.getGraph().addNode(n1);
@@ -91,9 +91,9 @@ class DwgMagicTest {
             e.printStackTrace();
         }
         dm.init(g1);
-        Point3D p1 = new Point3D(0,0);
+        Point2D p1 = new Point2D(0,0);
         Node n1 = new Node(p1,20);
-        Point3D p2 = new Point3D(3,4);
+        Point2D p2 = new Point2D(3,4);
         Node n2 = new Node(p2,21);
         //add nodes
         dm.getGraph().addNode(n1);
@@ -237,7 +237,7 @@ class DwgMagicTest {
         }
         dm.init(g1);
         int num_of_nodes = g1.nodeSize();
-        Point3D p1 = new Point3D(0,0);
+        Point2D p1 = new Point2D(0,0);
         Node n1 = new Node(p1,20);
         dm.getGraph().addNode(n1);// add new node
         dm.save("json_graphs\\saved_graph.json");

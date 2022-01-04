@@ -8,7 +8,7 @@ import api.GeoLocation;
  * in this programme we gonna use only x and y cordinates
  */
 
-public class Point3D implements GeoLocation {
+public class Point2D implements GeoLocation {
     double _x, _y;
 
     /**
@@ -16,7 +16,7 @@ public class Point3D implements GeoLocation {
      * @param x - cord
      * @param y - cord
      */
-    public Point3D(double x, double y) {
+    public Point2D(double x, double y) {
         this._x = x;
         this._y = y;
     }
@@ -25,7 +25,7 @@ public class Point3D implements GeoLocation {
      * deep copy
      * @param location - point location
      */
-    public Point3D(GeoLocation location) {
+    public Point2D(GeoLocation location) {
         this._x = location.x();
         this._y = location.y();
     }

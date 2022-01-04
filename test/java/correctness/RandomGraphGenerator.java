@@ -1,7 +1,7 @@
 package correctness;
 
-import FileWorkout.Loader;
-import FileWorkout.Saver;
+import director.Loader;
+import director.Saver;
 import api.*;
 import impGraph.*;
 import com.google.gson.Gson;
@@ -33,7 +33,7 @@ public class RandomGraphGenerator {
             //range: -nodes_size/2 to nodes_size/2
             double x_coordinate= (-nodes_size/2.0)+(nodes_size* rnd.nextDouble());
             double y_coordinate= (-nodes_size/2.0)+(nodes_size* rnd.nextDouble());
-            Point3D p = new Point3D(x_coordinate, y_coordinate);
+            Point2D p = new Point2D(x_coordinate, y_coordinate);
             nodes.add(new Node(p, i));// create new node
             //System.out.println(x_coordinate+","+ y_coordinate);
         }

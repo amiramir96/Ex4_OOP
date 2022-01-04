@@ -7,7 +7,7 @@ import api.NodeData;
  * implement as writen in the interface.
  */
 public class Node implements NodeData {
-    private final Point3D cord; // point on plane
+    private final Point2D cord; // point on plane
     private final int _id; // serial num
     private int tag; // for user decision
     private String metaData; // same as above
@@ -18,8 +18,8 @@ public class Node implements NodeData {
      * @param cord - point
      * @param id - serial num
      */
-    public Node(Point3D cord, int id) {
-        this.cord = new Point3D(cord);
+    public Node(Point2D cord, int id) {
+        this.cord = new Point2D(cord);
         this._id = id;
         this.tag = 0;
         this.metaData = "";
@@ -31,7 +31,7 @@ public class Node implements NodeData {
      * @param n - node
      */
     public Node(NodeData n){
-        this.cord = new Point3D(n.getLocation());
+        this.cord = new Point2D(n.getLocation());
         this._id = n.getKey();
         this.tag = n.getTag();
         this.metaData = n.getInfo();

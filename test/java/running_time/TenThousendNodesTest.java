@@ -1,6 +1,6 @@
 package running_time;
 
-import FileWorkout.Loader;
+import director.Loader;
 import api.DirectedWeightedGraph;
 import api.NodeData;
 import com.google.gson.JsonElement;
