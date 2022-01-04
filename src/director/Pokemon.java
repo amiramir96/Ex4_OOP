@@ -76,9 +76,16 @@ public class Pokemon implements Comparable{
             return -1;
         }
     }
+
+    /**
+     * xfer the value of the pokemon to serial id number that represent the image name of the pokemon
+     * @return id of the pokemon
+     */
     private int transVal_to_ImageNum() {
         return ((int)this.value)%25;
     }
+
+    /** ---------------------------------GETTERS AND SETTERS----------------------------------------*/
 
     public void setValue(double value) {
         this.value = value;
