@@ -82,7 +82,7 @@ public class Pokemon implements Comparable{
      * @return id of the pokemon
      */
     private int transVal_to_ImageNum() {
-        return ((int)this.value)%25;
+        return ((int)this.value)%20;
     }
 
     /** ---------------------------------GETTERS AND SETTERS----------------------------------------*/
