@@ -1,11 +1,11 @@
-//import api.*;
+//import Graph.api.*;
 //import com.google.gson.JsonElement;
 //import com.google.gson.JsonObject;
 //import com.google.gson.JsonParser;
 //import FileWorkout.*;
 //import graphics.Window;
-//import impGraph.Dwg;
-//import impGraph.DwgMagic;
+//import Graph.impGraph.Dwg;
+//import Graph.impGraph.DwgMagic;
 //import java.io.File;
 //import java.io.FileNotFoundException;
 //import java.io.FileReader;

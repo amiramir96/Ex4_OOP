@@ -1,7 +1,7 @@
 package director;
 
-import api.GeoLocation;
-import impGraph.Point2D;
+import Graph.api.GeoLocation;
+import Graph.impGraph.Point2D;
 
 /**
  * This class represents

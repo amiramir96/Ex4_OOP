@@ -1,16 +1,16 @@
 package director;
 
-import api.*;
-import impGraph.DwgMagic;
+import Graph.api.*;
+import Graph.impGraph.DwgMagic;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import impGraph.Dwg;
-import impGraph.Node;
-import impGraph.Point2D;
+import Graph.impGraph.Dwg;
+import Graph.impGraph.Node;
+import Graph.impGraph.Point2D;
 
 import java.io.File;
 import java.io.FileNotFoundException;

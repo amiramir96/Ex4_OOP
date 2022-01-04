@@ -1,16 +1,14 @@
 package director;
 
-import api.DirectedWeightedGraph;
-import ex4_java_client.Client;
-import impGraph.Dwg;
-import impGraph.Point2D;
+import Graph.api.DirectedWeightedGraph;
+import game_client.Client;
+import Graph.impGraph.Point2D;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import director.Loader;
 
 class ExecuterTest {
 

@@ -1,8 +1,8 @@
 package director;
 
-import api.DirectedWeightedGraph;
-import api.EdgeData;
-import api.NodeData;
+import Graph.api.DirectedWeightedGraph;
+import Graph.api.EdgeData;
+import Graph.api.NodeData;
 import java.util.LinkedList;
 import java.util.List;
 

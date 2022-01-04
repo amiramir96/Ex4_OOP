@@ -1,6 +1,6 @@
 package graphics;
 
-import api.*;
+import Graph.api.*;
 import director.Agent;
 import director.GameData;
 import director.Pokemon;

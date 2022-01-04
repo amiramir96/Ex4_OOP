@@ -1,7 +1,7 @@
 package director;
 
-import api.DirectedWeightedGraph;
-import ex4_java_client.Client;
+import Graph.api.DirectedWeightedGraph;
+import game_client.Client;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

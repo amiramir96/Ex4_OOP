@@ -1,6 +1,6 @@
 package graphics;
 
-import api.DirectedWeightedGraphAlgorithms;
+import Graph.api.DirectedWeightedGraphAlgorithms;
 import director.GameData;
 
 import javax.swing.*;

@@ -1,8 +1,8 @@
 package director;
 
-import api.DirectedWeightedGraph;
-import api.DirectedWeightedGraphAlgorithms;
-import ex4_java_client.Client;
+import Graph.api.DirectedWeightedGraph;
+import Graph.api.DirectedWeightedGraphAlgorithms;
+import game_client.Client;
 
 import java.util.Collections;
 import java.util.LinkedList;

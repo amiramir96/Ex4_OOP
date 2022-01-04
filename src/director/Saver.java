@@ -1,20 +1,14 @@
 package director;
 
-import api.DirectedWeightedGraph;
-import api.EdgeData;
-import api.NodeData;
+import Graph.api.DirectedWeightedGraph;
+import Graph.api.EdgeData;
+import Graph.api.NodeData;
 import com.google.gson.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 public class Saver {
 

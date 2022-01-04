@@ -1,28 +1,28 @@
 # Ex2-OOP
 Object Oriented Programming exercise 2<br>
 ## Program Overview
-in this assigment we were required to implement Directed Weighted Garph and some choosen algorithms via our teacher Interfaces : https://github.com/amiramir96/Ex2-OOP/tree/main/src/api <br> 
+in this assigment we were required to implement Directed Weighted Garph and some choosen algorithms via our teacher Interfaces : https://github.com/amiramir96/Ex2-OOP/tree/main/src/Graph.api <br> 
 the directed weigthed graph/algorithms objects shall implemented within the best time run as possible since its can hold alot of vertex and edges. <br>
 in addition, we shall create a GUI programme that support every algorithm that implemented on the graph (for ex, load graph, isConnected, tsp etc..) <br>
 
-Our implementation works in O(1) for all basic operations on the graph (get/add/remove node/edge) and is very modular- all data transfer between classes is done through the api.
+Our implementation works in O(1) for all basic operations on the graph (get/add/remove node/edge) and is very modular- all data transfer between classes is done through the Graph.api.
 
 ## structre of the project code
-the project splits to packges: api (interfaces of our teacher, as explained above), FileWorkout, impGraph, graphAlgo, graphics, tests (will be explained below, not in this topic)
+the project splits to packges: Graph.api (interfaces of our teacher, as explained above), FileWorkout, Graph.impGraph, Graph.graphAlgo, graphics, tests (will be explained below, not in this topic)
 
 |**package name:**|                                                     **Description**                                                                                      |
 |-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **api**         |    interfaces of graph, node, edge, point(geolocation) and graph algorithms.                                                                             | 
+| **Graph.api**         |    interfaces of graph, node, edge, point(geolocation) and graph algorithms.                                                                             | 
 | **FileWorkout** |     implement DFS algorithm, for more details on DFS <br> please look at "Review of the Literature" at the bottom of the readme                          |   
-|  **impGraph**   |     implmentation of all interfaces from api package, also, hold some inner class to manage threads, iterators                                           |   | **graphAlgo**   |    hold implementation for the known algorithms DFS, Dijkstra to support the graphAlgorithms methods                                                     |
+|  **Graph.impGraph**   |     implmentation of all interfaces from Graph.api package, also, hold some inner class to manage threads, iterators                                           |   | **Graph.graphAlgo**   |    hold implementation for the known algorithms DFS, Dijkstra to support the graphAlgorithms methods                                                     |
 |  **graphics**   |    represent all the GUI classes, with constructing the Window class, the GUI gets open for the user usage                                               |
 | **Tests**       |   2 categories - 1) Currectness: test each of the public class methods to return currect answer, 2) RunningTime - testing only algorithms for big graphs | 
 | **JsonFiles**   |   Concentrate all the json files at the same package                                                                                                     |
 
 ## Tests
-The "PerformanceTest.jar" file is used totest the performaence of the algorithm on graphs with different sizes.  
+The "graph_test.PerformanceTest.jar" file is used totest the performaence of the algorithm on graphs with different sizes.  
 It can be called from the cmd or be given the number of nodes for the graph.  
-`java -jar PerformanceTest.jar` or `java -jar PerformanceTest.jar 200` for example.  
+`java -jar graph_test.PerformanceTest.jar` or `java -jar graph_test.PerformanceTest.jar 200` for example.  
 The program will create a random graph with the specified number of nodes in the folder and test the elapsed time of multiple implemented methods on that graph.
 <br>
 

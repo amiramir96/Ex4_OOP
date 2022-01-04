@@ -1,6 +1,6 @@
 package graphics;
 
-import api.*;
+import Graph.api.*;
 import javax.swing.*;
 import java.awt.event.*;
 
