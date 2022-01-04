@@ -152,7 +152,9 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
 
         // draw at new image
         paintComponents(bufferGraphics); // paint graph
-        paintGameItems(bufferGraphics); // paint agents + pokemons
+//        synchronized (this.gd.getCurr_client()){
+            paintGameItems(bufferGraphics); // paint agents + pokemons
+//        }
 
         // "Switch" the old image for the new one
         g.drawImage(bufferImage, 0, 0, this);
@@ -162,24 +164,8 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
         Graphics2D graphic = (Graphics2D) g;
         double[] cord;
         File f;
-        graphic.setColor(new Color(255, 0, 0));
         Agent agent;
         Pokemon pok;
-        for (int i=0; i<this.gd.getAgents_size(); i++){
-            agent = gd.getAgents().get(i);
-            cord = linearTransform(agent.getPos()); // linear transfer regular cord to width/height cord
-//            System.out.println(cord[0] + " "+ cord[1]);
-            // draw agent
-//            try{
-//                f = new File("agents_image/ash.png");
-//                Image img = ImageIO.read(f);
-//                graphic.drawImage(img, (int)cord[0], (int)cord[1], (int)(50*zoomInOut), (int)(50*zoomInOut), this);
-//            }
-//            catch (IOException e) {
-                graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint*zoomInOut*3, this.heightPoint*zoomInOut*3));
-//            }
-            graphic.drawString(""+agent.getId(), (int)cord[0], (int)cord[1]);
-        }
         graphic.setColor(new Color(110, 80, 0));
         for (int j=0; j<this.gd.getPokemons_size(); j++){
             pok = this.gd.getPokemons().get(j);
@@ -195,6 +181,23 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
                 graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint * zoomInOut, this.heightPoint * zoomInOut));
             }
             graphic.drawString(""+pok.getValue(), (int)cord[0], (int)cord[1]);
+        }
+        graphic.setColor(new Color(255, 0, 0));
+        for (int i=0; i<this.gd.getAgents_size(); i++){
+            agent = gd.getAgents().get(i);
+            cord = linearTransform(agent.getPos()); // linear transfer regular cord to width/height cord
+//            System.out.println(cord[0] + " "+ cord[1]);
+            // draw agent
+//            try{
+//                f = new File("agents_image/ash.png");
+//                Image img = ImageIO.read(f);
+//                graphic.drawImage(img, (int)cord[0], (int)cord[1], (int)(50*zoomInOut), (int)(50*zoomInOut), this);
+//            }
+//            catch (IOException e) {
+            graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint*zoomInOut*3, this.heightPoint*zoomInOut*3));
+//            }
+//            System.out.println(cord[0] +" "+cord[1]);
+            graphic.drawString(""+agent.getId(), (int)cord[0], (int)cord[1]);
         }
         graphic.setColor(this.defNode);
     }
@@ -486,7 +489,7 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
         while(!this.exitFlag){
             repaint();
             try {
-                Thread.sleep(5);
+                Thread.sleep(25);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

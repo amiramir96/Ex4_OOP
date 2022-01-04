@@ -6,7 +6,7 @@ import api.DirectedWeightedGraphAlgorithms;
 import ex4_java_client.Client;
 
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -14,7 +14,7 @@ import java.util.List;
  * and details for the game extracted from the server
  * extracted from client->getInfo
  */
-public class GameData {
+public class GameData{
 
     int pokemons_size;
     boolean is_logged_in;
@@ -36,7 +36,7 @@ public class GameData {
      * @param c - client that works with server game
      */
     public GameData(Client c) {
-
+        this.agents = null;
         this.curr_client = c;
     }
 
@@ -88,7 +88,7 @@ public class GameData {
         this.max_user_level = max_user_level;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -114,6 +114,15 @@ public class GameData {
 
     public List<Pokemon> getPokemons() {
         return pokemons;
+    }
+    public List<Pokemon> getFreePokemons(){
+        LinkedList<Pokemon> output = new LinkedList<>();
+        for (Pokemon poki : this.pokemons){
+            if (!poki.engaged){
+                output.addLast(poki);
+            }
+        }
+        return output;
     }
 
     public void setPokemons(List<Pokemon> pokemons) {

@@ -10,6 +10,7 @@ public class Pokemon implements Comparable{
     int id; // decides which type of pokemon it is :)
     int src, dest; // which edge the pokemon stands on
     boolean engaged;
+    double mark;
 
     public Pokemon(double v, int t, GeoLocation p, int src, int dest){
         this.value = v;
@@ -19,6 +20,17 @@ public class Pokemon implements Comparable{
         this.src = src;
         this.dest = dest;
         this.engaged = false;
+    }
+
+    public Pokemon(double v, int t, GeoLocation p, int src, int dest, double m){
+        this.value = v;
+        this.type = t;
+        this.pos = p;
+        this.id = transVal_to_ImageNum();
+        this.src = src;
+        this.dest = dest;
+        this.engaged = false;
+        this.mark = m;
     }
 
     public Pokemon(double v, int t, double x, double y, int src, int dest){
@@ -111,5 +123,11 @@ public class Pokemon implements Comparable{
         return "Poki id: "+this.getId()+" value: "+this.getValue()+" on edge from: "+this.getSrc()+" to: "+this.getDest() +" engaged: ";
     }
 
+    public double getMark() {
+        return mark;
+    }
 
+    public void setMark(double mark) {
+        this.mark = mark;
+    }
 }

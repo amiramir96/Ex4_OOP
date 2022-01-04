@@ -23,14 +23,16 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 public class LoadGraph {
 
     private static final double EPS = 0.000001;
     DirectedWeightedGraph currGraph;
-
+    double mark;
     public LoadGraph(DirectedWeightedGraph g){
         this.currGraph = g;
+        this.mark = -1000000;
     }
     /**
      * return DEG from name
@@ -118,8 +120,9 @@ public class LoadGraph {
      * @param strJsonFile - represent json format of string of Agents
      * @return list of agents
      */
-    public static ArrayList<Agent> getAgents(String strJsonFile){
+    public static ArrayList<Agent> getAgents(String strJsonFile, List<Agent> list){
         // init vars and json obj
+        System.out.println(strJsonFile);
         JSONObject x = new JSONObject(strJsonFile);
         JSONArray agents = x.getJSONArray("Agents");
         JSONObject ab, a;
@@ -131,23 +134,48 @@ public class LoadGraph {
         double speed;
         String[] q;
         GeoLocation pos;
-
-        for (int i=0; i < agents.length(); i++){
-            // loop over all json objects that represent agents
-            ab = (JSONObject) agents.get(i);
-            a = (JSONObject) ab.get("Agent");
-            id = a.getInt("id");
-            value = a.getDouble("value");
-            src = a.getInt("src");
-            dest = a.getInt("dest");
-            speed = a.getDouble("speed");
-            q = a.getString("pos").split(",");
-            pos = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
-
-            // set it into the list
-            output.add(new Agent(id, value, src, dest, speed, pos));
+        if (list == null){
+            for (int i=0; i < agents.length(); i++){
+                // loop over all json objects that represent agents
+                ab = (JSONObject) agents.get(i);
+                a = (JSONObject) ab.get("Agent");
+                id = a.getInt("id");
+                value = a.getDouble("value");
+                src = a.getInt("src");
+                dest = a.getInt("dest");
+                speed = a.getDouble("speed");
+                q = a.getString("pos").split(",");
+                pos = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
+                // set it into the list
+                output.add(new Agent(id, value, src, dest, speed, pos));
+                System.out.println(pos);
+            }
+            return output;
         }
-        return output;
+        else {
+            Agent agen;
+            for (int i=0; i < agents.length(); i++){
+                // loop over all json objects that represent agents
+                ab = (JSONObject) agents.get(i);
+                a = (JSONObject) ab.get("Agent");
+                id = a.getInt("id");
+                value = a.getDouble("value");
+                src = a.getInt("src");
+                dest = a.getInt("dest");
+                speed = a.getDouble("speed");
+                q = a.getString("pos").split(",");
+                pos = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
+                agen = list.get(i);
+                agen.setPos(pos);
+                agen.setSpeed(speed);
+                agen.setValue(value);
+                agen.setSrc(src);
+                agen.setDest(dest);
+                System.out.println(pos);
+            }
+            return (ArrayList<Agent>) list;
+        }
+
     }
 
     /**
@@ -259,10 +287,11 @@ public class LoadGraph {
         JSONObject x = y.getJSONObject("GameServer");
         ptr.setPokemons_size(x.getInt("pokemons"));
         if (flagAgent){
-            ptr.setAgents(getAgents(ptr.getCurr_client().getAgents()));
+            ptr.setAgents(getAgents(ptr.getCurr_client().getAgents(), ptr.getAgents()));
         }
         if (flagPok){
-            ptr.setPokemons(getPokemons(ptr.getCurr_client().getPokemons()));
+            CheckNewPokemons(ptr, ptr.getCurr_client().getPokemons());
+//            ptr.setPokemons(getPokemons(ptr.getCurr_client().getPokemons()));
         }
         ptr.setMoves(x.getInt("moves"));
         ptr.setGrade(x.getInt("grade"));
@@ -271,5 +300,48 @@ public class LoadGraph {
         ptr.setId(x.getInt("id"));
         ptr.setGraph_directory(x.getString("graph"));
         ptr.setAgents_size(x.getInt("agents"));
+    }
+
+    private void CheckNewPokemons(GameData ptr, String strJsonFile) {
+        this.mark++;
+        // init vars and json
+        JSONObject x = new JSONObject(strJsonFile);
+        JSONArray pokemons = x.getJSONArray("Pokemons");
+        JSONObject pb, p;
+        ArrayList<Pokemon> output = new ArrayList<>();
+        double val;
+        int type;
+        String[] q;
+        GeoLocation point;
+        Pokemon pok;
+        EdgeData tempE; // will decide which edge that pok stands on
+        List<Pokemon> list = ptr.getPokemons();
+        boolean exist = false;
+
+        // loop over all json objects that represent pokemons
+        for (int i=0; i<pokemons.length(); i++){
+            // save their data and create pokemon
+            pb = (JSONObject) pokemons.get(i);
+            p = (JSONObject) pb.get("Pokemon");
+            val = p.getDouble("value");
+            type = p.getInt("type");
+            q = p.getString("pos").split(",");
+            point = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
+
+            for (Pokemon poki : list){
+                if (poki.getPos().x() == point.x() && poki.getPos().y() == point.y() && poki.getValue() == val && poki.getType() == type){
+                    poki.setMark(this.mark);
+                    exist = true;
+                    break;
+                }
+            }
+            if (!exist){
+                tempE = checkMyEdge(point, type);
+                list.add(new Pokemon(val, type, point, tempE.getSrc(), tempE.getDest(), this.mark));
+            }
+            exist = false;
+        }
+        list.removeIf(poki -> poki.getMark() != this.mark); // thanks to intellij <3
+        ptr.setPokemons_size(list.size());
     }
 }

@@ -1,6 +1,7 @@
 package graphAlgo;
 
 import api.*;
+import impGraph.Node;
 
 import java.util.*;
 import java.util.List;
@@ -171,7 +172,10 @@ public class Dijkstra{
     public double shortestToSpecificNode(NodeData dest){
         return this.distMap.get(KeyTransform(dest.getKey())).get(dest.getKey());
     }
-
+    public double shortestToSpecificNode(int d){
+        NodeData dest = this.currGraph.getNode(d);
+        return this.distMap.get(KeyTransform(dest.getKey())).get(dest.getKey());
+    }
     /**
      * for use of Center from dwgMagic
      * returns longest path from the while distMap
@@ -194,6 +198,23 @@ public class Dijkstra{
      * @return - shortestPath represented as List
      */
     public List<NodeData> shortestPathList(NodeData dest){
+        if (dest == null){
+            return null;
+        }
+        // get the prevMap from the pathDijkstra algo
+        LinkedList<NodeData> outputPath = new LinkedList<>(); // output list
+        if (this.prevMap.get(KeyTransform(dest.getKey())).get(dest.getKey()) == -1) { return outputPath; } // -1 == not exist, both nodes is not connected
+        outputPath.addFirst(dest); // dest node is the last in the list
+        NodeData tempN;
+        for (tempN=dest; this.prevMap.get(KeyTransform(tempN.getKey())).get(tempN.getKey()) != -1 && tempN != null; tempN = this.currGraph.getNode(prevMap.get(KeyTransform(tempN.getKey())).get(tempN.getKey()))){ // reverse run from dest node to parents
+            outputPath.addFirst(this.currGraph.getNode(prevMap.get(KeyTransform(tempN.getKey())).get(tempN.getKey()))); // add first so we keep on order
+        }
+//        outputPath.removeFirst(); // remove the parent of src which is null
+        return outputPath;
+    }
+
+    public List<NodeData> shortestPathList(int d){
+        NodeData dest = this.currGraph.getNode(d);
         if (dest == null){
             return null;
         }

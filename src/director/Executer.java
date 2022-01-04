@@ -1,6 +1,8 @@
 package director;
 
+import api.DirectedWeightedGraph;
 import api.EdgeData;
+import api.NodeData;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,17 +17,24 @@ public class Executer implements Runnable{
     LinkedList<Integer> next_stations;
     Agent x;
     boolean flag;
+    double timeToEndAll; // seconds to end all the tasks in the stations list
+    DirectedWeightedGraph currGraph;
 
     public Executer(int id, GameData g){
         this.agent_id = id;
         this.gd = g;
+        this.currGraph = g.getCurr_graph();
         this.flag = true;
+        this.timeToEndAll = 0; // seconds
+        this.next_stations = new LinkedList<>();
     }
     public Executer(int id, LinkedList<Integer> stations, GameData g){
         this.agent_id = id;
         this.next_stations = stations;
         this.gd = g;
+        this.currGraph = g.getCurr_graph();
         this.flag = true;
+        this.timeToEndAll = 0; // seconds
     }
 
     /**
@@ -42,7 +51,7 @@ public class Executer implements Runnable{
             }
             int src = this.x.getSrc();
             int dest = this.next_stations.getFirst();
-            EdgeData tempE = gd.getCurr_graph().getEdge(src, dest);
+            EdgeData tempE = this.currGraph.getEdge(src, dest);
             if (tempE == null){
                 return 0;
             }
@@ -68,25 +77,30 @@ public class Executer implements Runnable{
     public void run() {
         double t;
         while (flag){
-            t = timeToEndTask();
-            if (t == 0){ //
-                try { // unable to engage the agent to next node (or there is no next stops)
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            else {
-                try { // engage the agent to his next stop
-                    this.x = this.gd.getAgents().get(agent_id);
-                    // "{\"agent_id\":" + id + ", \"next_node_id\": " + dest + "}"
-                    this.gd.getCurr_client().chooseNextEdge("{\"agent_id\":" + agent_id + ", \"next_node_id\": " + this.getNext_stations().getFirst() + "}");
-                    this.getNext_stations().removeFirst();
-                    Thread.sleep((long) (t*1000));
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            synchronized (this.gd.getCurr_client()) {
+//                synchronized (this.gd) {
+                    t = timeToEndTask();
+                    if (t == 0) { //
+                        System.out.println(" F M L exec: "+this.agent_id);
+                        try { // unable to engage the agent to next node (or there is no next stops)
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try { // engage the agent to his next stop
+                            this.x = this.gd.getAgents().get(agent_id);
+                            // "{\"agent_id\":" + id + ", \"next_node_id\": " + dest + "}"
+                            this.gd.getCurr_client().chooseNextEdge("{\"agent_id\":" + agent_id + ", \"next_node_id\": " + this.getNext_stations().getFirst() + "}");
+                            this.getNext_stations().removeFirst();
+
+                            System.out.println("how long im gonna sleep?: "+t);
+                            Thread.sleep((long) (t * 1000));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+//                }
             }
         }
     }
@@ -122,6 +136,49 @@ public class Executer implements Runnable{
         return this.flag;
     }
     public void addStop(int node){
-        this.next_stations.addFirst(node);
+        if (!this.next_stations.isEmpty() && this.next_stations.getLast() == node){
+            return;
+        }
+        else {
+            this.next_stations.addLast(node);
+        }
+    }
+    public void addManyStops(LinkedList<Integer> nodes){
+        this.next_stations.addAll(nodes);
+    }
+    public void addManyStops(List<NodeData> nodes){
+        for (NodeData node : nodes){
+            if (!this.next_stations.isEmpty() && this.next_stations.getLast() == node.getKey()){
+                continue;
+            }
+            else {
+                this.next_stations.addLast(node.getKey());
+
+            }
+        }
+    }
+    public double selfUpdateTimeToEndAll(double speed){
+        if (this.next_stations == null || this.next_stations.isEmpty()){
+            this.timeToEndAll = 0;
+            return 0;
+        }
+        double temp = 0;
+        int src, dest;
+        for (int i=0; i < this.next_stations.size()-1; i++){
+            src = this.next_stations.get(i);
+            dest = this.next_stations.get(i+1);
+//            System.out.println(src+" "+dest);
+            temp += this.currGraph.getEdge(src, dest).getWeight();
+        }
+        this.timeToEndAll = temp/speed;
+        return this.timeToEndAll;
+    }
+
+    public double getTimeToEndAll() {
+        return timeToEndAll;
+    }
+
+    public void setTimeToEndAll(double timeToEndAll) {
+        this.timeToEndAll = timeToEndAll;
     }
 }

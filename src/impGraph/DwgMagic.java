@@ -138,6 +138,22 @@ public class DwgMagic implements DirectedWeightedGraphAlgorithms {
     }
 
     /**
+     * as above, returns the node_id and not the nodes itself
+     * @param src - from node
+     * @param dest - to node
+     * @return list of integers, each int represent node_id
+     */
+    public LinkedList<Integer> shortestPathIntegers(int src, int dest) {
+        Dijkstra dijObj = new Dijkstra(this.currGraph, this.currGraph.getNode(src));
+        dijObj.mapPathDijkstra(this.currGraph.getNode(src)); // dijksta algo main proccess
+        List<NodeData> nodeDataList = dijObj.shortestPathList(this.currGraph.getNode(dest));
+        LinkedList<Integer> output = new LinkedList<>();
+        for (NodeData node : nodeDataList){
+            output.addLast(node.getKey());
+        }
+        return output;
+    }
+    /**
      * first term is that the graph isConnected, so - will start "center" process if and only if isConnected is true
      * using dijkstra * |V| => O((|V|)*O(|E|log|V| + |V|log|V|) => O(|V|*|E|log(|V|))
      * |V| is the amount of nodes in the graph (V for vertex)

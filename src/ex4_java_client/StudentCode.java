@@ -3,11 +3,13 @@ package ex4_java_client; /**
  * A trivial example for starting the server and running all needed commands
  */
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
 import FileWorkout.LoadGraph;
+import api.NodeData;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,6 +18,7 @@ import director.Agent;
 import director.Executer;
 import director.GameData;
 import director.Pokemon;
+import graphAlgo.Dijkstra;
 import graphics.Window;
 import impGraph.Dwg;
 import org.json.JSONArray;
@@ -33,6 +36,9 @@ public class StudentCode {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        String str = client.getAgents();
+        System.out.println(str);
 
         currGD = new GameData(client);
         LoadGraph q = new LoadGraph(new Dwg());
@@ -67,11 +73,19 @@ public class StudentCode {
         currGD.self_update(true, true);
         Window windo = new Window(currGD.getCurr_algo(), currGD);
 
-        LinkedList<Integer> l1 = new LinkedList<>();
-        l1.addLast(2); l1.addLast(1); l1.addLast(0);
-        Executer ee = new Executer(0, l1, currGD);
-        Thread th0 = new Thread(ee);
-
+//        // bdikat shfiut
+//        LinkedList<Integer> l1 = new LinkedList<>();
+//        l1.addLast(2); l1.addLast(1); l1.addLast(0);
+//        Executer ee = new Executer(0, l1, currGD);
+//        Thread th0 = new Thread(ee);
+        ArrayList<Thread> threads = new ArrayList<>();
+        ArrayList<Executer> executers = new ArrayList<>();
+        Executer exec;
+        for (int i=0; i < agent_amount; i++){
+            exec = new Executer(i, currGD);
+            executers.add(exec);
+            threads.add(new Thread(exec));
+        }
 
 
 
@@ -82,23 +96,23 @@ public class StudentCode {
 
         client.addAgent("{\"id\":0}");
         String agentsStr = client.getAgents();
-        LoadGraph.getAgents(agentsStr);
+//        LoadGraph.getAgents(agentsStr);
         System.out.println(agentsStr);
-//        String pokemonsStr = client.getPokemons();
+        String pokemonsStr = client.getPokemons();
 //        LoadGraph.getPokemons(pokemonsStr);
-//        System.out.println(pokemonsStr);
-        System.out.println("\n");
+        System.out.println(pokemonsStr);
 //        GameData gd = new GameData(client);
 //        LoadGraph.updateGameData(gd, true, true);
 //        gd.setCurr_client(client);
 //        System.out.println(client.getInfo());
 //        System.out.println(gd.getAgents_size()+" "+gd.getAgents());
-        System.out.println("\n");
         String isRunningStr = client.isRunning();
-        System.out.println(isRunningStr);
+        System.out.println("client is running: " + isRunningStr);
 
         client.start();
-        th0.start();
+        for (Thread th : threads){
+            th.start();
+        }
 
 //        System.out.println(client.getAgents());
 //        System.out.println(client.timeToEnd());
@@ -106,25 +120,89 @@ public class StudentCode {
 //        System.out.println("enter the next dest: ");
 //        int next = keyboard.nextInt();
 //        client.chooseNextEdge("{\"agent_id\":0, \"next_node_id\": " + next + "}");
-
+        double[] times = new double[executers.size()];
+        double[] speeds = new double[executers.size()];
+        double min_time;
+        int min_idx;
+        NodeData n;
+        Dijkstra[] dijkstras = new Dijkstra[executers.size()];
+        List<Pokemon> tempFreePokemons = new ArrayList<>();
+        int iterates = 10;
         while (true) {
-            try{
+            try {
                 Thread.sleep(10);
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (client.isRunning().equals("true")){
-                client.move();
-                currGD.self_update(true, true);
+            if (client.isRunning().equals("true")) {
+                synchronized (client) {
+//                    synchronized (currGD) {
+                        if (iterates == 10) {
+                            System.out.println("synced for main and move");
+//                        System.out.println("ordered move");
+                            client.move();
+                            iterates = 0;
+//                    }
+                            currGD.self_update(true, true);
+                            //-----------------------------------------------------------------------------------
+                            /** HERE GONNA BE the BRAIN Process that decides which agent engage which pokemon*/
+                            for (Executer ex : executers) {
+//                    System.out.println("im exec of agent: "+ex.getAgent_id());
+                                ex.selfUpdateTimeToEndAll(currGD.getAgents().get(ex.getAgent_id()).getSpeed());
+                            }
+                            tempFreePokemons = currGD.getFreePokemons();
+                            speeds = updateSpeeds(currGD.getAgents());
+                            for (Pokemon poki : tempFreePokemons) {
+//                    System.out.println(poki);
+                                for (Agent agent : currGD.getAgents()) {
+                                    if (executers.get(agent.getId()).getNext_stations() == null || executers.get(agent.getId()).getNext_stations().isEmpty()) {
+                                        n = currGD.getCurr_graph().getNode(agent.getSrc());
+                                    } else {
+                                        n = currGD.getCurr_graph().getNode(executers.get(agent.getId()).getNext_stations().getLast());
+                                    }
+                                    dijkstras[agent.getId()] = new Dijkstra(currGD.getCurr_graph(), n);
+                                    dijkstras[agent.getId()].mapPathDijkstra(n);
+                                    times[agent.getId()] = executers.get(agent.getId()).getTimeToEndAll() + dijkstras[agent.getId()].shortestToSpecificNode(poki.getSrc()) / speeds[agent.getId()];
+                                }
+                                min_time = Double.MAX_VALUE;
+                                min_idx = 0;
+                                for (int i = 0; i < times.length; i++) {
+                                    if (min_time > times[i]) {
+                                        min_idx = i;
+                                        min_time = times[i];
+                                    }
+                                }
+                                executers.get(min_idx).addManyStops(dijkstras[min_idx].shortestPathList(poki.getSrc()));
+                                executers.get(min_idx).addStop(poki.getDest());
+                                times = new double[executers.size()];
+                                poki.setEngaged(true);
+                            }
+                        }
+////                        System.out.println();
+//                        //-----------------------------------------------------------------------------------
+                        else {
+                            System.out.println("synced for main but without move ");
+                            currGD.self_update(true, true);
+                        }
+//                    }
+                }
             }
             else {
                 break;
             }
+            iterates++;
         }
 
         // set here "join" to all threads.
 
+    }
+
+    private static double[] updateSpeeds(List<Agent> agents) {
+        double[] output = new double[agents.size()];
+        for (Agent a : agents){
+            output[a.getId()] = a.getSpeed();
+        }
+        return output;
     }
 
 }
