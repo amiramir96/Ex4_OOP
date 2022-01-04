@@ -1,6 +1,6 @@
 package director;
 
-import FileWorkout.LoadGraph;
+import FileWorkout.Loader;
 import api.DirectedWeightedGraph;
 import api.DirectedWeightedGraphAlgorithms;
 import ex4_java_client.Client;
@@ -16,21 +16,27 @@ import java.util.List;
  */
 public class GameData{
 
+    Client curr_client; // most important - our game client
+    // fields we get from the client ^^
     int pokemons_size;
     boolean is_logged_in;
     int moves;
     int grade;
     int game_level;
+    String timeLeft; // string in seconds
     int max_user_level;
     int id;
     String graph_directory;
     int agents_size;
+
+    // fields that holds all the game data structres
+    // this way the consumer of this code can point everywhere in the programme via the gameData obj
     List<Pokemon> pokemons;
     List<Agent> agents;
-    Client curr_client;
     DirectedWeightedGraph curr_graph;
     DirectedWeightedGraphAlgorithms curr_algo;
-    LoadGraph load;
+    Loader load;
+
     /**
      * wont be able to construct gamedata without a working client
      * @param c - client that works with server game
@@ -40,6 +46,31 @@ public class GameData{
         this.curr_client = c;
     }
 
+    /**
+     * @return only the unengaged pokemons (a.k.a free)
+     */
+    public List<Pokemon> getFreePokemons(){
+        LinkedList<Pokemon> output = new LinkedList<>();
+        // just loop over whole pokemon list and choose if unegaged
+        for (Pokemon poki : this.pokemons){
+            if (!poki.engaged){
+                output.addLast(poki);
+            }
+        }
+        return output;
+    }
+
+    /**
+     * update its own fields via loader methods
+     */
+    public void self_update(boolean agentFlag, boolean pokFlag){
+        if (agentFlag || pokFlag){
+            load.updateGameData(this, agentFlag, pokFlag);
+        }
+        Collections.sort(this.pokemons); // sort pokemons list from the highest value to the lowest one
+    }
+
+    /** --------------------------------- GETTERS AND SETTERS ---------------------------------------*/
     public int getPokemons_size() {
         return pokemons_size;
     }
@@ -116,16 +147,6 @@ public class GameData{
         return pokemons;
     }
 
-    public List<Pokemon> getFreePokemons(){
-        LinkedList<Pokemon> output = new LinkedList<>();
-        for (Pokemon poki : this.pokemons){
-            if (!poki.engaged){
-                output.addLast(poki);
-            }
-        }
-        return output;
-    }
-
     public void setPokemons(List<Pokemon> pokemons) {
         this.pokemons = pokemons;
     }
@@ -142,12 +163,6 @@ public class GameData{
 
     public void setCurr_client(Client curr_client) {
         this.curr_client = curr_client;
-    }
-    public void self_update(boolean agentFlag, boolean pokFlag){
-        if (agentFlag || pokFlag){
-            load.updateGameData(this, agentFlag, pokFlag);
-        }
-        Collections.sort(this.pokemons);
     }
 
     public DirectedWeightedGraph getCurr_graph() {
@@ -166,12 +181,20 @@ public class GameData{
         this.curr_algo = curr_algo;
     }
 
-    public LoadGraph getLoad() {
+    public Loader getLoad() {
         return load;
     }
 
-    public void setLoad(LoadGraph load) {
+    public void setLoad(Loader load) {
         this.load = load;
+    }
+
+    public String getTimeLeft() {
+        return timeLeft;
+    }
+
+    public void setTimeLeft(String timeLeft) {
+        this.timeLeft = timeLeft;
     }
 }
 

@@ -1,6 +1,6 @@
 package correctness;
 
-import FileWorkout.LoadGraph;
+import FileWorkout.Loader;
 import api.DirectedWeightedGraph;
 import api.NodeData;
 import impGraph.Dwg;
@@ -20,8 +20,8 @@ class DwgMagicTest {
     DirectedWeightedGraph g1, g2;
     {
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\G1.json");
-            g2 = LoadGraph.loadGraph("json_graphs\\G2.json");
+            g1 = Loader.loadGraph("json_graphs\\G1.json");
+            g2 = Loader.loadGraph("json_graphs\\G2.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -65,7 +65,7 @@ class DwgMagicTest {
     @Test
     void shortestPathDist() {
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\G1.json");
+            g1 = Loader.loadGraph("json_graphs\\G1.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -86,7 +86,7 @@ class DwgMagicTest {
     @Test
     void shortestPath() {
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\G1.json");
+            g1 = Loader.loadGraph("json_graphs\\G1.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -110,7 +110,7 @@ class DwgMagicTest {
     void center() {
         // I built this graph so that it's center is 0
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\GShfiut.json");
+            g1 = Loader.loadGraph("json_graphs\\GShfiut.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -231,7 +231,7 @@ class DwgMagicTest {
     @Test
     void save() {
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\GShfiut.json");
+            g1 = Loader.loadGraph("json_graphs\\GShfiut.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -243,7 +243,7 @@ class DwgMagicTest {
         dm.save("json_graphs\\saved_graph.json");
         //reload graph
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\saved_graph.json");
+            g1 = Loader.loadGraph("json_graphs\\saved_graph.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

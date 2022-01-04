@@ -1,7 +1,7 @@
 package impGraph;
 
-import FileWorkout.LoadGraph;
-import FileWorkout.SaveGraph;
+import FileWorkout.Loader;
+import FileWorkout.Saver;
 import api.DirectedWeightedGraph;
 import api.DirectedWeightedGraphAlgorithms;
 import api.NodeData;
@@ -498,7 +498,7 @@ public class DwgMagic implements DirectedWeightedGraphAlgorithms {
     @Override
     public boolean save(String file) {
         try{
-            SaveGraph.save(file, this.currGraph);
+            Saver.save(file, this.currGraph);
             return true;
         }
         catch (IOException err){
@@ -516,7 +516,7 @@ public class DwgMagic implements DirectedWeightedGraphAlgorithms {
     public boolean load(String file) {
         try {
             DirectedWeightedGraph dwg = new Dwg();
-            LoadGraph l = new LoadGraph(dwg);
+            Loader l = new Loader(dwg);
             dwg = l.loadGraph(file);
             this.currGraph = dwg;
             this.isConnected = -1;

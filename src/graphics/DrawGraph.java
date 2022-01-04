@@ -12,9 +12,9 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * inherit from JPanel and impliments Mouse interfaces
@@ -24,8 +24,6 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
     Window window;
     GameData gd;
     // init params
-    final double constWidth = 750*0.8;
-    final double constHeight = 750*0.1;
     private double widthArrow;
     private double heightArrow;
     private double widthPoint;
@@ -41,13 +39,7 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
     final Font amirFont = new Font("a", Font.BOLD, 16);
 
     // for representing functions output (via colors)
-    boolean flagAllSameColor;
-    boolean flagTsp;
     final Color defEdge, defNode; // default colors
-    Color colorE, colorN; // special colors for events
-    HashMap<String, Integer> specialEdges; // which will be drawed with none default color
-    List<NodeData> specialNodes; // which will be drawed with none default color
-    HashMap<Integer, String> tspString; // helps to management drawing of TSP items
     //save mouse points, help to make picture accurate to client presses
     private Point2D mousePoint;
     private Point2D mousePrevPos;
@@ -77,68 +69,16 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
         // init colors block
         this.defNode = Color.BLACK; // black
         this.defEdge = new Color(0,100,200); // regular blue
-        this.specialNodes = new LinkedList<>();
-        this.specialEdges = new HashMap<>();
-        this.flagAllSameColor = false;
-        this.flagTsp = false;
 
         // as needed..
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
         this.addMouseWheelListener(this);
-
         this.exitFlag = false;
+
+
     }
 
-    /**
-     * if the graph or its algos parameters have been changed, drawer obj shall be updated
-     * @param newAlgo - for example DwgMagic
-     */
-    void updateDrawer(DirectedWeightedGraphAlgorithms newAlgo){
-        // init params
-        this.algoGraph = newAlgo;
-        this.currGraph = newAlgo.getGraph();
-        this.zoomInOut = 1;
-        this.widthArrow = 4.0;
-        this.heightArrow = 4.0;
-        this.widthPoint = 5.0;
-        this.heightPoint = 5.0;
-        mousePoint = new Point(0,0);
-        mousePrevPos = new Point(0,0);
-        mouseNextPos = new Point(0,0);
-        // init flag for coloring (zeroing)
-        this.flagAllSameColor = false;
-        this.flagTsp = false;
-        // back to default
-        if (newAlgo.getGraph() != null && newAlgo.getGraph().nodeSize() > 0){
-            updateMinMax();
-        }
-        this.exitFlag = false;
-    }
-
-    /**
-     * update special colors for node and edges
-     * @param nodeNewColor - color
-     * @param edgeNewColor - color
-     */
-    void setColors(Color nodeNewColor, Color edgeNewColor){
-        this.colorN = nodeNewColor;
-        this.colorE = edgeNewColor;
-    }
-
-    /**
-     * update flage "allSameColor" - decide if to draw all color in the same special color
-     * @param b - boolean
-     */
-    void setFlagAllSameColor(boolean b){
-        this.flagAllSameColor = b;
-    }
-
-    /**
-     * update flage "tsp" - decide if to draw special nodes as tsp strategy or regulary
-     * @param b - boolean
-     */
-    public void setFlagTsp(boolean b) { this.flagTsp = b; }
     /**
      * credit to Shai Aharon teacher
      * this function ensure that the program will draw everything on a back image
@@ -147,21 +87,36 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
      */
     public void paint(Graphics g) {
         // create new image
-        Image bufferImage = createImage(750, 750);
+        Image bufferImage = createImage(this.getWidth(), this.getHeight());
         Graphics bufferGraphics = bufferImage.getGraphics();
 
         // draw at new image
         paintComponents(bufferGraphics); // paint graph
-//        synchronized (this.gd.getCurr_client()){
-            paintGameItems(bufferGraphics); // paint agents + pokemons
-//        }
+        if (!exitFlag){ // if exit we r done here :)
+            paintGameItems(bufferGraphics); // paint agents + pokemons + game info
+        }
 
-        // "Switch" the old image for the new one
         g.drawImage(bufferImage, 0, 0, this);
     }
 
+    /**
+     * paint components of the game that can be changed meanwhile running time:
+     * 1- pokemons <- set to ea pokemon a picture of pokemon between 100 diff pokemons
+     * 2- agents <- represented as RED circle
+     * 3- game info <- in the left corner of the window
+     * @param g - graphics obj
+     */
     private void paintGameItems(Graphics g){
         Graphics2D graphic = (Graphics2D) g;
+
+        // draw game info
+        int moves = this.gd.getMoves();
+        int time = Integer.parseInt(this.gd.getTimeLeft());
+        graphic.drawString("moves: " + moves,5,15);
+        graphic.drawString("grade: " + gd.getGrade(),5,29);
+        graphic.drawString("time left: " + TimeUnit.MILLISECONDS.toSeconds(time),5,43);
+
+        // draw pokemons
         double[] cord;
         File f;
         Agent agent;
@@ -174,29 +129,24 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
             try {
                 f = new File("pokmeons_image/"+pok.getId()+".png");
                 Image img = ImageIO.read(f);
-                //+this.widthPoint*zoomInOut), +this.heightPoint*zoomInOut)
                 graphic.drawImage(img, (int)cord[0], (int)(cord[1]-this.heightPoint*zoomInOut*3), (int)(50*zoomInOut), (int)(50*zoomInOut), this);
             }
             catch(Exception e) {
+                // if pokemon picture didnt opened for some reason - print pokemons as BROWN circle
                 graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint * zoomInOut, this.heightPoint * zoomInOut));
             }
-            graphic.drawString(""+pok.getValue(), (int)cord[0], (int)cord[1]);
+            // string of the pokemon - 'value Edge: (src, dest)'
+            graphic.drawString(""+pok.getValue()+" Edge: ("+pok.getSrc()+","+pok.getDest()+")", (int)cord[0], (int)cord[1]);
         }
+
+        // draw Agents
         graphic.setColor(new Color(255, 0, 0));
         for (int i=0; i<this.gd.getAgents_size(); i++){
+
             agent = gd.getAgents().get(i);
             cord = linearTransform(agent.getPos()); // linear transfer regular cord to width/height cord
-//            System.out.println(cord[0] + " "+ cord[1]);
-            // draw agent
-//            try{
-//                f = new File("agents_image/ash.png");
-//                Image img = ImageIO.read(f);
-//                graphic.drawImage(img, (int)cord[0], (int)cord[1], (int)(50*zoomInOut), (int)(50*zoomInOut), this);
-//            }
-//            catch (IOException e) {
+            // draw as red circle and write agent_id above
             graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint*zoomInOut*3, this.heightPoint*zoomInOut*3));
-//            }
-//            System.out.println(cord[0] +" "+cord[1]);
             graphic.drawString(""+agent.getId(), (int)cord[0], (int)cord[1]);
         }
         graphic.setColor(this.defNode);
@@ -204,15 +154,9 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
 
     /**
      * executing the draw process via neccessary params (colors etc..)
-     * split all nodes and edges to two groups: specials, regulars
-     *      specials shall be drawen within the var choosen color
-     *      regulars shall be drawen within default colors ("final colors", cant be changed)
      * draw phases:
-     *  1- draw regular edges
-     *  2- draw regular nodes
-     *  3- draw special edges
-     *  4- draw special nodes
-     *  in this way, the user will always see in front the data that they looked for in priority
+     *  1- draw all edges
+     *  2- draw all nodes
      *
      * this function draws on the bufferImage that paints creates (paint function will switch between the buffers)
      * @param g - graphics of the curr drawer
@@ -220,133 +164,49 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
     public void paintComponents(Graphics g){
         Graphics2D graphic = (Graphics2D) g;
 
-        // stage 1: paint regular edge
+        // stage 1: paint all edges
         // init params
         graphic.setStroke(this.edgeStroke);
         double[] cordSrc, cordDest;
         EdgeData tempE;
         List<EdgeData> edgeDataList = new ArrayList<>(); // for special edges - tranform from "menu languege" to "drawer languege"
         Iterator<EdgeData> itEdge = this.currGraph.edgeIter();
+        // draw edges
         while (itEdge.hasNext()){ // draw all edges which is not "special" with default color which is blue
             // init edge
             tempE = itEdge.next();
             cordSrc = linearTransform(this.currGraph.getNode(tempE.getSrc()).getLocation());
             cordDest = linearTransform(this.currGraph.getNode(tempE.getDest()).getLocation());
             // init color
-            if (this.flagAllSameColor || this.specialEdges.containsKey(""+tempE.getSrc()+","+tempE.getDest()) || this.specialEdges.containsKey(""+tempE.getDest()+","+tempE.getSrc())){
-                if (this.flagAllSameColor){ // true = paint all edges with the special color
-                    graphic.setColor(this.colorE);
-                    drawArrow(graphic, cordSrc[0], cordSrc[1], cordDest[0], cordDest[1]); // draw arrow (edge)
-                }
-                edgeDataList.add(tempE); // add to special edge to print (transform from "menu languege" to "drawer languege"
-
-            }
-            else{ // default color
-                graphic.setColor(this.defEdge);
-                drawArrow(graphic, cordSrc[0], cordSrc[1], cordDest[0], cordDest[1]); // draw arrow (edge)
-            }
+            graphic.setColor(this.defEdge);
+            drawArrow(graphic, cordSrc[0], cordSrc[1], cordDest[0], cordDest[1]); // draw arrow (edge)
         }
 
 
-        // stage 2: paint regular nodes
+        // stage 2: paint all nodes
+        // init vars
         graphic.setStroke(this.nodeStroke);
         Iterator<NodeData> itNode = this.currGraph.nodeIter();
         double[] cord;
         NodeData tempN;
         graphic.setFont(amirFont);
         if (this.currGraph != null && this.currGraph.nodeSize() <= 3){// when there is only few nodes - picture shall be defined abit diff
-            this.min_max_cord[0] -= 10;
-            this.min_max_cord[1] -= 10;
-            this.min_max_cord[2] += 10;
-            this.min_max_cord[3] += 10;
+            this.min_max_cord[0] -= 10*(1/zoomInOut);
+            this.min_max_cord[1] -= 10*(1/zoomInOut);
+            this.min_max_cord[2] += 10*(1/zoomInOut);
+            this.min_max_cord[3] += 10*(1/zoomInOut);
         }
 
+        // draw all nodes
         while (itNode.hasNext()) {
             // init node
             tempN = itNode.next();
             cord = linearTransform(tempN.getLocation()); // linear transfer regular cord to width/height cord
             // init color
-            if (this.flagAllSameColor || this.specialNodes.contains(tempN)){
-                if (this.flagAllSameColor){ // true = all nodes shall be painted with special color
-                    graphic.setColor(this.colorN);
-                    // draw curr node
-                    graphic.draw(new Ellipse2D.Double(cord[0] - this.widthPoint*zoomInOut/2, cord[1]-this.heightPoint*zoomInOut/2, this.widthPoint*zoomInOut, this.heightPoint*zoomInOut));
-                    graphic.drawString(""+tempN.getKey(), (int)cord[0], (int)cord[1]);
-                }
-            }
-            else {
-                graphic.setColor(this.defNode);
-                // draw curr node
-                graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint*zoomInOut, this.heightPoint*zoomInOut));
-                graphic.drawString(""+tempN.getKey(), (int)cord[0], (int)cord[1]);
-            }
-
-        }
-
-        // stage 3: paint special edges
-        // note - if flagAllSameColor is true, the edgeDataList is irrelevant
-        graphic.setStroke(this.edgeStroke);
-        itEdge = edgeDataList.iterator();
-        while(itEdge.hasNext() && !this.flagAllSameColor){
-            tempE = itEdge.next();
-            cordSrc = linearTransform(this.currGraph.getNode(tempE.getSrc()).getLocation());
-            cordDest = linearTransform(this.currGraph.getNode(tempE.getDest()).getLocation());
-            graphic.setColor(this.colorE);
-            drawArrow(graphic, cordSrc[0], cordSrc[1], cordDest[0], cordDest[1]); // draw arrow (edge)
-        }
-
-        // stage 4: paint all special nodes
-        graphic.setStroke(this.nodeStroke);
-        itNode = this.specialNodes.iterator();
-        while(itNode.hasNext()){
-            tempN = itNode.next();
-            cord = linearTransform(tempN.getLocation()); // linear transfer regular cord to width/height cord
-            graphic.setColor(this.colorN);
+            graphic.setColor(this.defNode);
             // draw curr node
             graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint*zoomInOut, this.heightPoint*zoomInOut));
-            if (this.flagTsp){ // true = we in TSP mode! shall print in addition the station String!
-                graphic.drawString(""+tempN.getKey()+" station: "+this.tspString.get(tempN.getKey()), (int)cord[0], (int)cord[1]);
-            }
-            else{ // just print the node_id
-                graphic.drawString(""+tempN.getKey(), (int)cord[0], (int)cord[1]);
-            }
-        }
-    }
-
-    /**
-     * remove duplicate nodes which contains in the specialNodes list
-     * helpful for tsp handling which is hard to print without duplicates
-     */
-    void removeDuplicate() {
-        int size = this.specialNodes.size();
-        NodeData n;
-        // iterate over the list
-        for (int i=0; i < size; i++){
-            n = this.specialNodes.get(0);
-            // remove all pointers to node n
-            while (this.specialNodes.contains(n)){
-                this.specialNodes.remove(n);
-            }
-            // add node n back to the list
-            this.specialNodes.add(n);
-        }
-    }
-
-    /**
-     *  loop over special nodes list
-     *  creates HashMap with keys - node_id, values - string which shall be printed with the curr node in the end of TSP process
-     */
-    void makeTspString() {
-        this.tspString = new HashMap<>();
-        int stationCounter=1; // represent the id station which the travel will get to within the i "move"
-        for (NodeData element : this.specialNodes){
-            if (!this.tspString.containsKey(element.getKey())){ // first time we handling with the element node
-                this.tspString.put(element.getKey(), ""+stationCounter);
-            }
-            else { // not the first time
-                this.tspString.replace(element.getKey(), this.tspString.get(element.getKey()) +","+stationCounter);
-            }
-            stationCounter++;
+            graphic.drawString(""+tempN.getKey(), (int)cord[0], (int)cord[1]);
         }
     }
 
@@ -426,10 +286,14 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
      * @return - x,y cordinates that match the picture
      */
     double[] linearTransform(GeoLocation point){ // credit to Daniel Rosenberg, student of our class, for the formula
+//      min_max_cord; // idx: 0-minX, 1-minY, 2-maxX, 3-maxY
+
         double delCurrX = this.min_max_cord[2] - point.x(), delPicX = this.min_max_cord[2] - this.min_max_cord[0];
         double delCurrY = this.min_max_cord[3] - point.y(), delPicY = this.min_max_cord[3] - this.min_max_cord[1];
-        double x = (delCurrX / delPicX * this.constWidth + this.constHeight + mousePoint.getX()) * zoomInOut;
-        double y = (delCurrY / delPicY * this.constWidth + this.constHeight + mousePoint.getY()) * zoomInOut;
+
+        double x = ((delCurrX / delPicX)*this.getWidth()*0.85 + this.getWidth()*0.05 + mousePoint.getX()) * zoomInOut;
+        double y = ((delCurrY / delPicY)*this.getHeight()*0.85 + this.getHeight()*0.05 + mousePoint.getY()) * zoomInOut;
+
         return new double[]{x,y};
     }
 
@@ -489,7 +353,7 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
         while(!this.exitFlag){
             repaint();
             try {
-                Thread.sleep(25);
+                Thread.sleep(20);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -498,4 +362,5 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
             this.window.closeWindow();
         }
     }
+
 }

@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class SaveGraph {
+public class Saver {
 
     /**
      * save graph as json string in given target file

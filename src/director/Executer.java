@@ -3,7 +3,6 @@ package director;
 import api.DirectedWeightedGraph;
 import api.EdgeData;
 import api.NodeData;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,34 +13,29 @@ import java.util.List;
 public class Executer implements Runnable{
     GameData gd;
     int agent_id;
-    LinkedList<Integer> next_stations;
-    Agent x;
-    boolean flag;
+    LinkedList<Integer> next_stations; // orddered list of stations, ea int represent node_id, first item is always the next stop
+    Agent x; // ez field to work with -> just a temporary pointer
     double timeToEndAll; // seconds to end all the tasks in the stations list
     DirectedWeightedGraph currGraph;
 
+    /** Constructor */
     public Executer(int id, GameData g){
         this.agent_id = id;
         this.gd = g;
         this.currGraph = g.getCurr_graph();
-        this.flag = true;
         this.timeToEndAll = 0; // seconds
         this.next_stations = new LinkedList<>();
-    }
-    public Executer(int id, LinkedList<Integer> stations, GameData g){
-        this.agent_id = id;
-        this.next_stations = stations;
-        this.gd = g;
-        this.currGraph = g.getCurr_graph();
-        this.flag = true;
-        this.timeToEndAll = 0; // seconds
     }
 
     /**
      * @return time to end the next task (curr pos of agent -> first item in linked list
+     * return 0 if:
+     *  ->there is no task that the agent moving to currectly
+     *
      */
     double timeToEndTask(){
         this.x = gd.getAgents().get(agent_id);
+        // no curr task ongoing
         if (this.x.getDest() != -1){
             return 0;
         }
@@ -49,6 +43,8 @@ public class Executer implements Runnable{
             if (this.next_stations == null || this.next_stations.isEmpty()){
                 return 0;
             }
+
+            // there is task ongoing -> return time to move from src->dest of the edge
             int src = this.x.getSrc();
             int dest = this.next_stations.getFirst();
             EdgeData tempE = this.currGraph.getEdge(src, dest);
@@ -62,54 +58,81 @@ public class Executer implements Runnable{
     }
 
     /**
+     * loop over the whole next_stations list and calculate time to get to its end
+     * @param speed - updated speed of the agent
+     * @return total time to END ALL TASKS
+     */
+    public double selfUpdateTimeToEndAll(double speed){
+        if (this.next_stations == null || this.next_stations.isEmpty()){
+            // zero for no tasks
+            this.timeToEndAll = 0;
+            return 0;
+        }
+        double temp = 0;
+        int src, dest;
+
+        for (int i=0; i < this.next_stations.size()-1; i++){
+            // loop over all the tasks and updated the time for that
+            src = this.next_stations.get(i);
+            dest = this.next_stations.get(i+1);
+            temp += this.currGraph.getEdge(src, dest).getWeight();
+        }
+        // return total
+        this.timeToEndAll = temp/speed;
+        return this.timeToEndAll;
+    }
+
+    /**
      * while thread is on:
      * 1. calculate time of the next task
      * 2. cases:
-     *  case 1:
-     *      agent is still meanwhile moving to some node
-     *      -> sleep 10 miliseconds and then check again.
-     *  case 2:
+     * case 2:
      *      agent is in "idle" mode
      *      -> engaged him to his next stop :)
-     * this thread will stop if and only if the game got to its end
+     *  case 2:
+     *      agent is still meanwhile moving to some node
+     *      -> do nothing
+     * this thread is work super fast since its only if command and one linear function to run in background
      */
     @Override
     public void run() {
         double t;
-//        while (flag){
-//        System.out.println("got to here");
-//            synchronized (this.gd.getCurr_client()) {
-//                synchronized (this.gd) {
-//                System.out.println("synced exec of agent: "+this.agent_id);
-                    t = timeToEndTask();
-                    if (t == 0) { //
-//                        System.out.println(" F M L exec: "+this.agent_id);
-//                        try { // unable to engage the agent to next node (or there is no next stops)
-//                            Thread.sleep(100);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-                    } else {
-//                        try { // engage the agent to his next stop
-                            this.x = this.gd.getAgents().get(agent_id);
-                            // "{\"agent_id\":" + id + ", \"next_node_id\": " + dest + "}"
-                            this.gd.getCurr_client().chooseNextEdge("{\"agent_id\":" + agent_id + ", \"next_node_id\": " + this.getNext_stations().getFirst() + "}");
-                            this.getNext_stations().removeFirst();
-
-//                            System.out.println("how long im gonna sleep?: "+t);
-//                            Thread.sleep((long) (t * 1000));
-//                        }
-//                        catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-                    }
-//                    System.out.println("near the end");
-//                    return;
-//                }
-//            }
+        t = timeToEndTask();
+        if (t != 0) {
+            this.x = this.gd.getAgents().get(agent_id);
+            this.gd.getCurr_client().chooseNextEdge("{\"agent_id\":" + agent_id + ", \"next_node_id\": " + this.getNext_stations().getFirst() + "}");
+            this.getNext_stations().removeFirst();
         }
-//    }
+    }
 
+    //------------------------------------------------------------------------------------------------------------------
+    /** functions that responsible for adding "stops"-> nodes that the agent have to move to-> to the next_statins list*/
+
+    public void addStop(int node){
+        if (!this.next_stations.isEmpty() && this.next_stations.getLast() == node){
+            return;
+        }
+        else {
+            this.next_stations.addLast(node);
+        }
+    }
+
+    public void addManyStops(LinkedList<Integer> nodes){
+        this.next_stations.addAll(nodes);
+    }
+    public void addManyStops(List<NodeData> nodes){
+        for (NodeData node : nodes){
+            if (!this.next_stations.isEmpty() && this.next_stations.getLast() == node.getKey()){
+                continue;
+            }
+            else {
+                this.next_stations.addLast(node.getKey());
+
+            }
+        }
+    }
+    // -----------------------------------------------------------------------------------------------
+    /** ------------------------ SETTER AND GETTERS ---------------------------------------------*/
 
     public int getAgent_id() {
         return agent_id;
@@ -134,50 +157,7 @@ public class Executer implements Runnable{
     public void setGd(GameData gd) {
         this.gd = gd;
     }
-    public void setRun(boolean f){
-        this.flag = f;
-    }
-    public boolean getRunStatus(){
-        return this.flag;
-    }
-    public void addStop(int node){
-        if (!this.next_stations.isEmpty() && this.next_stations.getLast() == node){
-            return;
-        }
-        else {
-            this.next_stations.addLast(node);
-        }
-    }
-    public void addManyStops(LinkedList<Integer> nodes){
-        this.next_stations.addAll(nodes);
-    }
-    public void addManyStops(List<NodeData> nodes){
-        for (NodeData node : nodes){
-            if (!this.next_stations.isEmpty() && this.next_stations.getLast() == node.getKey()){
-                continue;
-            }
-            else {
-                this.next_stations.addLast(node.getKey());
 
-            }
-        }
-    }
-    public double selfUpdateTimeToEndAll(double speed){
-        if (this.next_stations == null || this.next_stations.isEmpty()){
-            this.timeToEndAll = 0;
-            return 0;
-        }
-        double temp = 0;
-        int src, dest;
-        for (int i=0; i < this.next_stations.size()-1; i++){
-            src = this.next_stations.get(i);
-            dest = this.next_stations.get(i+1);
-//            System.out.println(src+" "+dest);
-            temp += this.currGraph.getEdge(src, dest).getWeight();
-        }
-        this.timeToEndAll = temp/speed;
-        return this.timeToEndAll;
-    }
 
     public double getTimeToEndAll() {
         return timeToEndAll;

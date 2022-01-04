@@ -1,11 +1,9 @@
 package correctness;
 
-import FileWorkout.LoadGraph;
+import FileWorkout.Loader;
 import api.DirectedWeightedGraph;
-import api.EdgeData;
 import api.NodeData;
 import impGraph.DwgMagic;
-import impGraph.Node;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
@@ -20,7 +18,7 @@ class nodeIterTest {
     DirectedWeightedGraph g1;
     {
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\G1.json");
+            g1 = Loader.loadGraph("json_graphs\\G1.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -58,7 +56,7 @@ class nodeIterTest {
     @Test
     void forEachRemaining() {
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\G1.json");
+            g1 = Loader.loadGraph("json_graphs\\G1.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

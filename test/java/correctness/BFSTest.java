@@ -1,6 +1,6 @@
 package correctness;
 
-import FileWorkout.LoadGraph;
+import FileWorkout.Loader;
 import api.DirectedWeightedGraph;
 import api.NodeData;
 import graphAlgo.BFS;
@@ -18,7 +18,7 @@ class BFSTest {
     void mainProcessIsConnected() {
         DirectedWeightedGraph g1 = null;
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\GShfiut.json");
+            g1 = Loader.loadGraph("json_graphs\\GShfiut.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

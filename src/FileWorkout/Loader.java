@@ -4,11 +4,9 @@ import api.*;
 import director.Agent;
 import director.GameData;
 import director.Pokemon;
-import ex4_java_client.Client;
 import impGraph.DwgMagic;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,12 +23,16 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class LoadGraph {
+/**
+ * this class holds all the methods that requires loading/parsing data from strings/files in json format
+ */
+public class Loader {
 
-    private static final double EPS = 0.000001;
+    private static final double EPS = 0.000001; // eps for cals
     DirectedWeightedGraph currGraph;
-    double mark;
-    public LoadGraph(DirectedWeightedGraph g){
+    double mark; // little field that helps to control over prev and curr pokemons on the game
+
+    public Loader(DirectedWeightedGraph g){ // simple constructor
         this.currGraph = g;
         this.mark = -1000000;
     }
@@ -95,7 +97,6 @@ public class LoadGraph {
             p[0] = Double.parseDouble(q[0]);
             p[1] = Double.parseDouble(q[1]);
             id = node.getInt("id");
-//            System.out.println(p[0]+", "+p[1] + ", "+dest);
             g.addNode(new Node(new Point3D(p[0], p[1]), id));
         }
 
@@ -104,6 +105,7 @@ public class LoadGraph {
         JSONObject edge;
         int src, dest;
         double weight;
+        // parse strings to edges
         for (int j=0; j < jsonEdges.length(); j++){
             edge = jsonEdges.getJSONObject(j);
             src = edge.getInt("src");
@@ -111,7 +113,6 @@ public class LoadGraph {
             dest = edge.getInt("dest");
             g.connect(src, dest, weight);
         }
-
         return g;
     }
 
@@ -122,11 +123,11 @@ public class LoadGraph {
      */
     public static ArrayList<Agent> getAgents(String strJsonFile, List<Agent> list){
         // init vars and json obj
-//        System.out.println(strJsonFile);
         JSONObject x = new JSONObject(strJsonFile);
         JSONArray agents = x.getJSONArray("Agents");
         JSONObject ab, a;
         ArrayList<Agent> output = new ArrayList<>();
+        // vars for the Agent obecjts
         int id;
         double value;
         int src;
@@ -134,7 +135,7 @@ public class LoadGraph {
         double speed;
         String[] q;
         GeoLocation pos;
-        if (list == null){
+        if (list == null){ // null -> first time we use this method -> shall CONSTRUCT the agent objects
             for (int i=0; i < agents.length(); i++){
                 // loop over all json objects that represent agents
                 ab = (JSONObject) agents.get(i);
@@ -148,11 +149,10 @@ public class LoadGraph {
                 pos = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
                 // set it into the list
                 output.add(new Agent(id, value, src, dest, speed, pos));
-//                System.out.println(pos);
             }
             return output;
         }
-        else {
+        else { // gameData agent list is not null -> shall only UPDATE the data of ea agents ingame
             Agent agen;
             for (int i=0; i < agents.length(); i++){
                 // loop over all json objects that represent agents
@@ -171,7 +171,6 @@ public class LoadGraph {
                 agen.setValue(value);
                 agen.setSrc(src);
                 agen.setDest(dest);
-//                System.out.println(pos);
             }
             return (ArrayList<Agent>) list;
         }
@@ -179,6 +178,7 @@ public class LoadGraph {
     }
 
     /**
+     * THIS METHOD CONSTRUCT THE POKEMONS OBJ (will be used for the start of the game)
      * build from the string file pokemon objects and set all of them into list
      * @param strJsonFile - represent json format of string of Pokemons
      * @return - list of pokemons
@@ -215,6 +215,7 @@ public class LoadGraph {
     }
 
     /**
+     * using the triangle inquality
      * check which edge of the currGraph, the point stands on
      * @param point - geo location (x,y)
      * @return edge the point is on
@@ -224,16 +225,15 @@ public class LoadGraph {
         EdgeData tempE=null;
         GeoLocation srcP, destP;
 
+        // iterate over all graph_nodes and decide the edge of the given point
         while (it.hasNext()){
             tempE = it.next();
             srcP = this.currGraph.getNode(tempE.getSrc()).getLocation();
             destP = this.currGraph.getNode(tempE.getDest()).getLocation();
             double temp = Math.abs(srcP.distance(destP) - (srcP.distance(point) + destP.distance(point)));
-//            System.out.println(tempE.getSrc() +" "+ tempE.getDest()+" dist gap: "+temp +" "+EPS);
 
             if (temp < EPS){
-//                System.out.println("found any edge?");
-//                System.out.println(tempE.getSrc() +" "+ tempE.getDest());
+                // just some logic term to work with the Type +-1 (instructors definition)
                 if (type < 0){ // src > dest
                     if (tempE.getSrc() > tempE.getDest()){
                         return tempE;
@@ -255,17 +255,26 @@ public class LoadGraph {
         return tempE;
     }
 
+    /**
+     * this method responsible to create "game space" for the game data objects
+     * which means to initialize all gameData fields (beside agents which will do only while "update game" funtions)
+     * @param ptr - gameData obj
+     */
     public void createGameFirstTime(GameData ptr){
+
+        // simple JSON format workout
         JSONObject y = new JSONObject(ptr.getCurr_client().getInfo());
         JSONObject x = y.getJSONObject("GameServer");
         ptr.setPokemons_size(x.getInt("pokemons"));
-        ptr.setCurr_graph(setGraph(ptr.getCurr_client().getGraph()));
-        ptr.setCurr_algo(new DwgMagic(ptr.getCurr_graph()));
+        ptr.setCurr_graph(setGraph(ptr.getCurr_client().getGraph())); // init graph
+        ptr.setCurr_algo(new DwgMagic(ptr.getCurr_graph())); // init graph algo
         this.currGraph = ptr.getCurr_graph();
-//        String temp = ptr.getCurr_client().getAgents();
-//        ptr.setAgents(getAgents(temp));
+
+        // set pokemon list
         ptr.setPokemons(getPokemons(ptr.getCurr_client().getPokemons()));
         Collections.sort(ptr.getPokemons());
+
+        // init all gameData fields
         ptr.setMoves(x.getInt("moves"));
         ptr.setGrade(x.getInt("grade"));
         ptr.setGame_level(x.getInt("game_level"));
@@ -273,26 +282,33 @@ public class LoadGraph {
         ptr.setId(x.getInt("id"));
         ptr.setGraph_directory(x.getString("graph"));
         ptr.setAgents_size(x.getInt("agents"));
-        LoadGraph load = new LoadGraph(ptr.getCurr_graph());
+        ptr.setTimeLeft(ptr.getCurr_client().timeToEnd());
+
+        // set loader for the gamedata (one obj for whole game, easier to mange)
+        Loader load = new Loader(ptr.getCurr_graph());
         ptr.setLoad(load);
     }
 
 
     /**
      * update details of currect game
+     * allow to the consumers of this method to decide if they would like to pass from updating pokemons/agents
      * @param ptr - pointer to gamedata object to update
      */
     public void updateGameData(GameData ptr, boolean flagAgent, boolean flagPok){
+        // Json format workout
         JSONObject y = new JSONObject(ptr.getCurr_client().getInfo());
         JSONObject x = y.getJSONObject("GameServer");
         ptr.setPokemons_size(x.getInt("pokemons"));
-        if (flagAgent){
+
+        if (flagAgent){ // agents
             ptr.setAgents(getAgents(ptr.getCurr_client().getAgents(), ptr.getAgents()));
         }
-        if (flagPok){
-            CheckNewPokemons(ptr, ptr.getCurr_client().getPokemons());
-//            ptr.setPokemons(getPokemons(ptr.getCurr_client().getPokemons()));
+        if (flagPok){ // pokemons
+            UpdatePokemons(ptr, ptr.getCurr_client().getPokemons());
         }
+
+        // update vars
         ptr.setMoves(x.getInt("moves"));
         ptr.setGrade(x.getInt("grade"));
         ptr.setGame_level(x.getInt("game_level"));
@@ -300,15 +316,24 @@ public class LoadGraph {
         ptr.setId(x.getInt("id"));
         ptr.setGraph_directory(x.getString("graph"));
         ptr.setAgents_size(x.getInt("agents"));
+        ptr.setTimeLeft(ptr.getCurr_client().timeToEnd());
     }
 
-    private void CheckNewPokemons(GameData ptr, String strJsonFile) {
+    /**
+     * inner method
+     * responsible to replace for GAMEDATA obj the list of pokemons to be the most relevant via:
+     *      1. adding new pokemons
+     *      2. remove pokemons that not existing in game anymore (got captured)
+     * @param ptr -gamedata obj
+     * @param strJsonFile - string of pokemons.json
+     */
+    private void UpdatePokemons(GameData ptr, String strJsonFile) {
         this.mark++;
         // init vars and json
         JSONObject x = new JSONObject(strJsonFile);
         JSONArray pokemons = x.getJSONArray("Pokemons");
+        // vars of a pokemon
         JSONObject pb, p;
-        ArrayList<Pokemon> output = new ArrayList<>();
         double val;
         int type;
         String[] q;
@@ -329,18 +354,21 @@ public class LoadGraph {
             point = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
 
             for (Pokemon poki : list){
+                // check if existing at the pokemon list
+                // then update only mark field
                 if (poki.getPos().x() == point.x() && poki.getPos().y() == point.y() && poki.getValue() == val && poki.getType() == type){
                     poki.setMark(this.mark);
                     exist = true;
                     break;
                 }
             }
-            if (!exist){
+            if (!exist){ // no exists == create new object
                 tempE = checkMyEdge(point, type);
                 list.add(new Pokemon(val, type, point, tempE.getSrc(), tempE.getDest(), this.mark));
             }
             exist = false;
         }
+        // remove all pokemons with diff mark field (means they r not existing in the server in the present)
         list.removeIf(poki -> poki.getMark() != this.mark); // thanks to intellij <3
         ptr.setPokemons_size(list.size());
     }

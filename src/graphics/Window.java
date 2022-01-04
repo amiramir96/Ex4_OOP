@@ -19,7 +19,7 @@ public class Window extends JFrame{
     DirectedWeightedGraphAlgorithms currAlgo;
     Menu menu;
     GameData currGameData;
-
+    DrawGraph drawer;
     public Window(DirectedWeightedGraphAlgorithms algos, GameData gd){
         // init window
         this.currAlgo = algos;
@@ -34,7 +34,7 @@ public class Window extends JFrame{
         this.setIconImage(im.getImage());
 
         // drawer for the features
-        DrawGraph drawer = new DrawGraph(this.currAlgo, this);
+        drawer = new DrawGraph(this.currAlgo, this);
         drawer.gd = this.currGameData;
         // menubar which control on features
         menu = new Menu(this.currAlgo, drawer, this);
@@ -46,7 +46,11 @@ public class Window extends JFrame{
         new Thread(drawer).start();
     }
 
+    /**
+     * this method responsible to close all graphic objects since we shut down the programme
+     */
     public void closeWindow(){
+        drawer.exitFlag = true;
         WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
     }

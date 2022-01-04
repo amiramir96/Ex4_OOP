@@ -1,6 +1,6 @@
 package running_time;
 
-import FileWorkout.LoadGraph;
+import FileWorkout.Loader;
 import api.DirectedWeightedGraph;
 import api.NodeData;
 import com.google.gson.JsonElement;
@@ -32,7 +32,7 @@ class ThousendNodesTest {
             JsonObject graphObject = graphElement.getAsJsonObject(); // convert to json object, then we can work on fields inside
             // jsonToNode return list of nodes, jsonToEdge return list of edges, both is the req to cons Dwg(directed weighted graph)
             Dwg d = new Dwg();
-            LoadGraph g = new LoadGraph(d);
+            Loader g = new Loader(d);
             ans = (Dwg) g.loadGraph(json_file);
         }
         catch (FileNotFoundException err){ // throw exception..

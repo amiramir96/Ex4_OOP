@@ -1,13 +1,11 @@
 package correctness;
 
-import FileWorkout.LoadGraph;
+import FileWorkout.Loader;
 import api.DirectedWeightedGraph;
 import impGraph.DwgMagic;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ThreadPoolTest {
 
@@ -16,7 +14,7 @@ class ThreadPoolTest {
         DirectedWeightedGraph g1 = null;
         {
             try {
-                g1 = LoadGraph.loadGraph("json_graphs\\G1.json");
+                g1 = Loader.loadGraph("json_graphs\\G1.json");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

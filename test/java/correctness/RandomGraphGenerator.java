@@ -1,10 +1,9 @@
 package correctness;
 
-import FileWorkout.LoadGraph;
-import FileWorkout.SaveGraph;
+import FileWorkout.Loader;
+import FileWorkout.Saver;
 import api.*;
 import impGraph.*;
-import graphAlgo.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -57,7 +56,7 @@ public class RandomGraphGenerator {
             System.exit(0);
         }
         try {
-            g = LoadGraph.loadGraph("random_graph.json");
+            g = Loader.loadGraph("random_graph.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Failed to load random graph");
@@ -73,13 +72,13 @@ public class RandomGraphGenerator {
         // combine edges
         JsonArray json_edges = new JsonArray();
         while (edge_it.hasNext()){
-            JsonObject edge = SaveGraph.EdgeToObject(edge_it.next());
+            JsonObject edge = Saver.EdgeToObject(edge_it.next());
             json_edges.add(edge);
         }
         // combine nodes
         JsonArray json_nodes = new JsonArray();
         while(node_it.hasNext()){
-            JsonObject node = SaveGraph.NodeToObject(node_it.next());
+            JsonObject node = Saver.NodeToObject(node_it.next());
             json_nodes.add(node);
         }
         // graph json

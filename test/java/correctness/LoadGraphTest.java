@@ -1,6 +1,6 @@
 package correctness;
 
-import FileWorkout.LoadGraph;
+import FileWorkout.Loader;
 import api.DirectedWeightedGraph;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ class LoadGraphTest {
         RandomGraphGenerator.createRndGraph(50);
         DirectedWeightedGraph g= null;
         try {
-            g = LoadGraph.loadGraph("random_graph.json");
+            g = Loader.loadGraph("random_graph.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,6 @@
 package correctness;
 
-import FileWorkout.LoadGraph;
+import FileWorkout.Loader;
 import api.DirectedWeightedGraph;
 import api.EdgeData;
 import impGraph.DwgMagic;
@@ -18,7 +18,7 @@ class edgeIterTest {
     DirectedWeightedGraph g1;
     {
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\G1.json");
+            g1 = Loader.loadGraph("json_graphs\\G1.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -54,7 +54,7 @@ class edgeIterTest {
     @Test
     void forEachRemaining() {
         try {
-            g1 = LoadGraph.loadGraph("json_graphs\\G1.json");
+            g1 = Loader.loadGraph("json_graphs\\G1.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
