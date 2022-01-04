@@ -110,9 +110,9 @@ public class StudentCode {
         System.out.println("client is running: " + isRunningStr);
 
         client.start();
-        for (Thread th : threads){
-            th.start();
-        }
+//        for (Thread th : threads){
+//            th.start();
+//        }
 
 //        System.out.println(client.getAgents());
 //        System.out.println(client.timeToEnd());
@@ -138,7 +138,7 @@ public class StudentCode {
                 synchronized (client) {
 //                    synchronized (currGD) {
                         if (iterates == 10) {
-                            System.out.println("synced for main and move");
+//                            System.out.println("synced for main and move");
 //                        System.out.println("ordered move");
                             client.move();
                             iterates = 0;
@@ -177,11 +177,25 @@ public class StudentCode {
                                 times = new double[executers.size()];
                                 poki.setEngaged(true);
                             }
+                            for (Thread th : threads){
+                                th.run();
+//                                System.out.println("?");
+                            }
+                            for (Thread th : threads){
+                                try{
+                                    th.join();
+//                                    System.out.println("??");
+                                }
+                                catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+//                            System.out.println("???");
                         }
 ////                        System.out.println();
 //                        //-----------------------------------------------------------------------------------
                         else {
-                            System.out.println("synced for main but without move ");
+//                            System.out.println("synced for main but without move ");
                             currGD.self_update(true, true);
                         }
 //                    }

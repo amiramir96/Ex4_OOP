@@ -122,7 +122,7 @@ public class LoadGraph {
      */
     public static ArrayList<Agent> getAgents(String strJsonFile, List<Agent> list){
         // init vars and json obj
-        System.out.println(strJsonFile);
+//        System.out.println(strJsonFile);
         JSONObject x = new JSONObject(strJsonFile);
         JSONArray agents = x.getJSONArray("Agents");
         JSONObject ab, a;
@@ -148,7 +148,7 @@ public class LoadGraph {
                 pos = new Point3D(Double.parseDouble(q[0]), Double.parseDouble(q[1]));
                 // set it into the list
                 output.add(new Agent(id, value, src, dest, speed, pos));
-                System.out.println(pos);
+//                System.out.println(pos);
             }
             return output;
         }
@@ -171,7 +171,7 @@ public class LoadGraph {
                 agen.setValue(value);
                 agen.setSrc(src);
                 agen.setDest(dest);
-                System.out.println(pos);
+//                System.out.println(pos);
             }
             return (ArrayList<Agent>) list;
         }

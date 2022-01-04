@@ -76,34 +76,39 @@ public class Executer implements Runnable{
     @Override
     public void run() {
         double t;
-        while (flag){
-            synchronized (this.gd.getCurr_client()) {
+//        while (flag){
+//        System.out.println("got to here");
+//            synchronized (this.gd.getCurr_client()) {
 //                synchronized (this.gd) {
+//                System.out.println("synced exec of agent: "+this.agent_id);
                     t = timeToEndTask();
                     if (t == 0) { //
-                        System.out.println(" F M L exec: "+this.agent_id);
-                        try { // unable to engage the agent to next node (or there is no next stops)
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+//                        System.out.println(" F M L exec: "+this.agent_id);
+//                        try { // unable to engage the agent to next node (or there is no next stops)
+//                            Thread.sleep(100);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
                     } else {
-                        try { // engage the agent to his next stop
+//                        try { // engage the agent to his next stop
                             this.x = this.gd.getAgents().get(agent_id);
                             // "{\"agent_id\":" + id + ", \"next_node_id\": " + dest + "}"
                             this.gd.getCurr_client().chooseNextEdge("{\"agent_id\":" + agent_id + ", \"next_node_id\": " + this.getNext_stations().getFirst() + "}");
                             this.getNext_stations().removeFirst();
 
-                            System.out.println("how long im gonna sleep?: "+t);
-                            Thread.sleep((long) (t * 1000));
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+//                            System.out.println("how long im gonna sleep?: "+t);
+//                            Thread.sleep((long) (t * 1000));
+//                        }
+//                        catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
                     }
+//                    System.out.println("near the end");
+//                    return;
 //                }
-            }
+//            }
         }
-    }
+//    }
 
 
     public int getAgent_id() {
