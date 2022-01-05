@@ -1,8 +1,9 @@
 # Ex4-OOP
 Object Oriented Programming exercise 4<br>
 ## Program Overview
-in this assigment we were required to implemant the user side of Pokemon Game that will work sync with the client provided here: https://github.com/benmoshe/OOP_2021/tree/main/Assignments/Ex4/src/ex4_java_client <br>
-and the server side here:<br> https://github.com/benmoshe/OOP_2021/tree/main/Assignments/Ex4 <br> 
+in this assigment we were required to implemant the user side of Pokemon Game that will work sync with: <br>
+the client provided [here](https://github.com/benmoshe/OOP_2021/tree/main/Assignments/Ex4/src/ex4_java_client) <br>
+and the server side [here](https://github.com/benmoshe/OOP_2021/tree/main/Assignments/Ex4) <br> 
 the pokemon world game is a directed weighted graph, while each pokemon is located on a point of the graph nodes and edges, all of that have to be represented within GUI.
 and the Agents (the pokemon masters) will move around the world (the graph) and catch as many pokemons as possible in order to maximize the total agents score a.k.a grade. <br>
 <br>
@@ -11,7 +12,7 @@ Our principles to this project is to create:<br>
 1. consistent algorithm. <br>
 2. 100% sync within the server. <br>
 3. gui flow is smooth as much as possible and simple for the user to understand. <br>
-4. use our DirectedWeightedGraph and algorithms classes from previous assigment and stands with the above bullets. (link for prev assigment: https://github.com/amiramir96/Ex2-OOP) <br>
+4. use our DirectedWeightedGraph and algorithms classes from previous assigment and stands with the above bullets. [link for prev assigment](https://github.com/amiramir96/Ex2-OOP) <br>
 
 ## Architecture of the project
 the project splits to the next main packges:
@@ -23,11 +24,14 @@ the project splits to the next main packges:
 |  **director**   |   holds all the game classes (e.g Agent, Pokemon) and the algorithm "brain" itself                                                                     |   
 |  **graphics**   |    represent all the GUI classes and responsible to repaint the image window as long as the game is running                                               |
 | **Tests**       |  holds the tests for the Graph from the prev assigment and tests for the director - the classes which we built for this assigment                          | 
-| **data && json_graphs**   |   Concentrate all the json files at the same package                                                                                             |
+| **data && json_graphs**   |   data package - json files for graphs of the GAME (sync with server jar), json_graphs for tests of the graph packeg classes                   |
 
-#### multi threading workout
-look here for more details: <br>
-https://github.com/amiramir96/Ex4_OOP/wiki/multi-thread-workout
+###  design patterns
+================== אורי תחרטט כאן איזה משהו בבקשה שירדו לנו מהווריד============================
+
+
+### multi threading workout
+look here for more details: [multi threading wiki page](https://github.com/amiramir96/Ex4_OOP/wiki/multi-thread-workout) <br>
 
 
 ## algorithm overview
@@ -41,8 +45,7 @@ this time, the GUI opens, runs and stops automatically from the moment the game 
 the user doesnt have a control over anythin in the window beside the option to stop the game via exiting the game window:<br>
      stop the game meanwhile running, can happen by clieck: Menu (at the menu toolbar) -> exit. <br>
 <br>
-for more details about the GUI (symbol explanation, and short clip) click here: 
-https://github.com/amiramir96/Ex4_OOP/wiki/GUI
+for more details about the GUI (symbol explanation, and short clip) [click here](https://github.com/amiramir96/Ex4_OOP/wiki/GUI)
 <br>
 
 
