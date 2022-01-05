@@ -93,7 +93,9 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
         // draw at new image
         paintComponents(bufferGraphics); // paint graph
         if (!exitFlag){ // if exit we r done here :)
-            paintGameItems(bufferGraphics); // paint agents + pokemons + game info
+            synchronized (this.gd.getCurr_client()){
+                paintGameItems(bufferGraphics); // paint agents + pokemons + game info
+            }
         }
 
         g.drawImage(bufferImage, 0, 0, this);
@@ -353,7 +355,7 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
         while(!this.exitFlag){
             repaint();
             try {
-                Thread.sleep(20);
+                Thread.sleep(33);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
