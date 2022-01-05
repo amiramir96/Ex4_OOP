@@ -104,7 +104,7 @@ public class MainProcess {
         Dijkstra[] dijkstras = new Dijkstra[executers.size()]; // we gonna work with a Dijkstra obj for ea Agent
         List<Pokemon> tempFreePokemons = new ArrayList<>();
 
-        BlackBox algo = new BlackBox(currGD);
+        Help_Funcs algo = new Help_Funcs(currGD);
 
         int iterates = 10; // idx to control moves VS gameData updates VS server.move borders
         while (true) {
