@@ -27,8 +27,10 @@ the project splits to the next main packges:
 | **data && json_graphs**   |   data package - json files for graphs of the GAME (sync with server jar), json_graphs for tests of the graph packeg classes                   |
 
 ###  design patterns
-================== אורי תחרטט כאן איזה משהו בבקשה שירדו לנו מהווריד============================
-
+There are several design patterns implemented in this project, the most prominent one is "MVC".  
+There are 4 packages in the project, `graph` and `game client` are the "Model" part, and they control the data flow in the program.  
+`graphics` is the "View", it shows and updates the graph, agents and pokimones to the user.  
+and `director` is the "Control", that decides the next action according to the data from the "Model".  
 
 ### multi threading workout
 look here for more details: [multi threading wiki page](https://github.com/amiramir96/Ex4_OOP/wiki/multi-thread-workout) <br>
