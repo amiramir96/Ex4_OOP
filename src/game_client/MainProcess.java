@@ -89,8 +89,9 @@ public class MainProcess {
         Dijkstra[] dijkstras = new Dijkstra[executers.size()]; // we gonna work with a Dijkstra obj for ea Agent
         List<Pokemon> tempFreePokemons = new ArrayList<>();
 
-//        BlackBox algo = new BlackBox(currGD);
+        BlackBox blackBox = new BlackBox(currGD, executers);
 
+        client.start();
         int iterates = 6; // idx to control moves VS gameData updates VS server.move borders
         while (true) {
             /**
@@ -110,47 +111,7 @@ public class MainProcess {
                         iterates = 0;
                         currGD.self_update(true, true); // get the most updated game info
 
-
-                        //-----------------------------------------------------------------------------------
-                        // place for algorithm -> ori
-                        /** HERE GONNA BE the BRAIN Process that decides which agent engage which pokemon*/
-
-                        for (Executer ex : executers) {
-                            ex.selfUpdateTimeToEndAll(currGD.getAgents().get(ex.getAgent_id()).getSpeed());
-                        }
-                        tempFreePokemons = currGD.getFreePokemons();
-                        speeds = updateSpeeds(currGD.getAgents());
-                        for (Pokemon poki : tempFreePokemons) {
-                            if (thereIsFreeExec(executers)) {
-
-                                for (Agent agent : currGD.getAgents()) {
-                                    if (executers.get(agent.getId()).getNext_stations() == null || executers.get(agent.getId()).getNext_stations().isEmpty()) {
-                                        n = currGD.getCurr_graph().getNode(agent.getSrc());
-                                    } else {
-                                        n = currGD.getCurr_graph().getNode(executers.get(agent.getId()).getNext_stations().getLast());
-                                    }
-                                    dijkstras[agent.getId()] = new Dijkstra(currGD.getCurr_graph(), n);
-                                    dijkstras[agent.getId()].mapPathDijkstra(n);
-                                    times[agent.getId()] = executers.get(agent.getId()).getTimeToEndAll() + dijkstras[agent.getId()].shortestToSpecificNode(poki.getSrc()) / speeds[agent.getId()];
-                                }
-                                min_time = Double.MAX_VALUE;
-                                min_idx = 0;
-                                for (int i = 0; i < times.length; i++) {
-                                    if (min_time > times[i]) {
-                                        min_idx = i;
-                                        min_time = times[i];
-                                    }
-                                }
-                                if (executers.get(min_idx).isReady()){
-                                    executers.get(min_idx).addManyStops(dijkstras[min_idx].shortestPathList(poki.getSrc()));
-                                    executers.get(min_idx).addStop(poki.getDest());
-                                    times = new double[executers.size()];
-                                    currGD.setEngaged(poki.getSrc(), poki.getDest());
-                                }
-                            }
-                        }
-                        // END OF ALGORITHM
-                        //-----------------------------------------------------------------------------------
+                        blackBox.runAlgorithm(); // will decide how to match between agent -> pokemons.
 
                         // th.run == executer.run => executer update server about next destination of ea agent
                         for (Thread th : threads){
@@ -191,25 +152,5 @@ public class MainProcess {
         }
     }
 
-    private static boolean thereIsFreeExec(ArrayList<Executer> executers) {
-        for (Executer exec : executers){
-            if (exec.isReady()){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param agents - list of Agents
-     * @return arr of double, arr[agent_id] = agent_spped
-     */
-    private static double[] updateSpeeds(List<Agent> agents) {
-        double[] output = new double[agents.size()];
-        for (Agent a : agents){
-            output[a.getId()] = a.getSpeed();
-        }
-        return output;
-    }
 
 }

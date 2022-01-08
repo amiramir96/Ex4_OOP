@@ -129,12 +129,12 @@ public class Executer implements Runnable{
     //------------------------------------------------------------------------------------------------------------------
     /** functions that responsible for adding "stops"-> nodes that the agent have to move to-> to the next_statins list*/
 
-    public void addStop(int node){
-        if (!this.next_stations.isEmpty() && this.next_stations.getLast() == node){
+    public void addStop(int node_id){
+        if (!this.next_stations.isEmpty() && this.next_stations.getLast() == node_id){
             return;
         }
         else {
-            this.next_stations.addLast(node);
+            this.next_stations.addLast(node_id);
         }
     }
 
@@ -142,14 +142,14 @@ public class Executer implements Runnable{
 //        this.next_stations.addAll(nodes);
 //    }
 
+    /**
+     * add list of nodes to next_stations
+     * @param nodes - list of nodes to add to the next_stations list
+     */
     public void addManyStops(List<NodeData> nodes){
         for (NodeData node : nodes){
-            if (!this.next_stations.isEmpty() && (this.next_stations.getLast() == node.getKey())){
-                continue;
-            }
-            else {
+            if (this.next_stations.isEmpty() || this.next_stations.getLast() != node.getKey()){
                 this.next_stations.addLast(node.getKey());
-
             }
         }
     }
