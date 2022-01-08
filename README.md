@@ -41,7 +41,7 @@ The algorithm implemented in this project is a greedy algorithm.
 for every new pokimone, every agent will calculate it's fastest route to the pokimone from the last node of it's current path (say if the agent's path is 1-4-2-3 it will calculate the distance from 3 to the new pokimone)  
 The agent that will get to the pokimone the fastest (overall path/ agent speed) will engage the pokimone.  
 we find the shortest path to the pokimone using the dijkstra algorithm.  
-for more details click here:  (link to wiki with ur explanation about the algo)
+for more details click here:  [Algorithm overview](https://github.com/amiramir96/Ex4_OOP/wiki/Algorithm#algorithm-overview)
 <br>
 
 ## graphics - GUI 
