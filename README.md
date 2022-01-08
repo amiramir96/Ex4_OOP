@@ -65,30 +65,7 @@ if u would like to just play without handling any code, u can get only the serve
 
 ## Scenario Results
 <br>
------ אורי -------
-לפי דעתי עדיף להעביר את זה ל WIKI 
-ולשים פה קישור לויקי... סתם חבל זה טבלה שתופסת מקום ולא אומרת כלום לאפאחד 
-<br>
-
-| **Stage** | **moves** | **grade** | **game_level** | **graph_file** | **agents_amount**|
-|-----------|-----------|-----------|----------------|----------------|------------------|
-| 0         |           |           |                |                |                  |
-| 1         |           |           |                |                |                  |
-| 2         |           |           |                |                |                  |
-| 3         |           |           |                |                |                  |
-| 4         |           |           |                |                |                  |
-| 5         |           |           |                |                |                  |
-| 6         |           |           |                |                |                  |
-| 7         |           |           |                |                |                  |
-| 8         |           |           |                |                |                  |
-| 9         |           |           |                |                |                  |
-| 10        |           |           |                |                |                  |
-| 11        |           |           |                |                |                  |
-| 12        |           |           |                |                |                  |
-| 13        |           |           |                |                |                  |
-| 14        |           |           |                |                |                  |
-| 15        |           |           |                |                |                  |
-
+Results on the provided server are recorded here: [results](https://github.com/amiramir96/Ex4_OOP/wiki/Results#scenario-results)
 <br>
 
 ## Assigment instructions
