@@ -65,7 +65,7 @@ if u would like to just play without handling any code, u can get only the serve
 
 ## Scenario Results
 <br>
-Results on the provided server are recorded here: [results](https://github.com/amiramir96/Ex4_OOP/wiki/Results#scenario-results)
+Results on the provided server are recorded here: https://github.com/amiramir96/Ex4_OOP/wiki/Results#scenario-results
 <br>
 
 ## Assigment instructions
