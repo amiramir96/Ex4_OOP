@@ -17,6 +17,7 @@ public class Executer implements Runnable{
     Agent x; // ez field to work with -> just a temporary pointer
     double timeToEndAll; // seconds to end all the tasks in the stations list
     DirectedWeightedGraph currGraph;
+    private int currDest;
 
     /** Constructor */
     public Executer(int id, GameData g){
@@ -36,14 +37,17 @@ public class Executer implements Runnable{
     double timeToEndTask(){
         this.x = gd.getAgents().get(agent_id);
         // no curr task ongoing
+        if (this.next_stations == null || this.next_stations.isEmpty()){
+            return 0;
+        }
+        if (this.next_stations.getFirst() == currDest){
+            this.next_stations.removeFirst();
+            return 0;
+        }
         if (this.x.getDest() != -1){
             return 0;
         }
         else {
-            if (this.next_stations == null || this.next_stations.isEmpty()){
-                return 0;
-            }
-
             // there is task ongoing -> return time to move from src->dest of the edge
             int src = this.x.getSrc();
             int dest = this.next_stations.getFirst();
@@ -71,7 +75,7 @@ public class Executer implements Runnable{
         double temp = 0;
         int src, dest;
 
-        x = this.gd.getAgents().get(agent_id);
+//        x = this.gd.getAgents().get(agent_id);
         EdgeData tempE =  this.currGraph.getEdge(x.getSrc(), this.next_stations.getFirst());
         if (tempE != null){
             temp += tempE.getWeight();
@@ -85,6 +89,16 @@ public class Executer implements Runnable{
         // return total
         this.timeToEndAll = temp/speed;
         return this.timeToEndAll;
+    }
+
+    /**
+     * @return if agent of the execeuter is ready to get a new Task (moving to catch pokemon)
+     */
+    public boolean isReady(){
+        if (this.x.getSrc() == this.currDest && this.next_stations.isEmpty()){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -104,10 +118,12 @@ public class Executer implements Runnable{
         double t;
         t = timeToEndTask();
         if (t != 0) {
-            this.x = this.gd.getAgents().get(agent_id);
-            this.gd.getCurr_client().chooseNextEdge("{\"agent_id\":" + agent_id + ", \"next_node_id\": " + this.getNext_stations().getFirst() + "}");
+//            this.x = this.gd.getAgents().get(agent_id);
+            this.currDest = this.next_stations.getFirst();
+            this.gd.getCurr_client().chooseNextEdge("{\"agent_id\":" + agent_id + ", \"next_node_id\": " + this.next_stations.getFirst() + "}");
             this.getNext_stations().removeFirst();
         }
+
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -122,12 +138,13 @@ public class Executer implements Runnable{
         }
     }
 
-    public void addManyStops(LinkedList<Integer> nodes){
-        this.next_stations.addAll(nodes);
-    }
+//    public void addManyStops(LinkedList<Integer> nodes){
+//        this.next_stations.addAll(nodes);
+//    }
+
     public void addManyStops(List<NodeData> nodes){
         for (NodeData node : nodes){
-            if (!this.next_stations.isEmpty() && this.next_stations.getLast() == node.getKey()){
+            if (!this.next_stations.isEmpty() && (this.next_stations.getLast() == node.getKey())){
                 continue;
             }
             else {
@@ -170,5 +187,13 @@ public class Executer implements Runnable{
 
     public void setTimeToEndAll(double timeToEndAll) {
         this.timeToEndAll = timeToEndAll;
+    }
+    public Agent getExecAgent() {
+        return x;
+    }
+
+    public void setExecAgent(Agent x) {
+        this.currDest = x.getSrc();
+        this.x = x;
     }
 }

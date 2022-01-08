@@ -60,6 +60,19 @@ public class GameData{
     }
 
     /**
+     * mark all pokemons on the same edge as engaged
+     * @param src - node_id
+     * @param dest - node_id
+     */
+    public void setEngaged(int src, int dest){
+        for (Pokemon poki : pokemons){
+            if (poki.getSrc() == src && poki.getDest() == dest){
+                poki.setEngaged(true);
+            }
+        }
+    }
+
+    /**
      * update its own fields via loader methods
      */
     public void self_update(boolean agentFlag, boolean pokFlag){

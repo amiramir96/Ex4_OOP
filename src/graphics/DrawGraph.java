@@ -110,48 +110,53 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
      */
     private void paintGameItems(Graphics g){
         Graphics2D graphic = (Graphics2D) g;
+        try {
+            // draw game info
+            int moves = this.gd.getMoves();
+            int time = Integer.parseInt(this.gd.getTimeLeft());
+            graphic.drawString("moves: " + moves,5,15);
+            graphic.drawString("grade: " + gd.getGrade(),5,29);
+            graphic.drawString("time left: " + TimeUnit.MILLISECONDS.toSeconds(time),5,43);
 
-        // draw game info
-        int moves = this.gd.getMoves();
-        int time = Integer.parseInt(this.gd.getTimeLeft());
-        graphic.drawString("moves: " + moves,5,15);
-        graphic.drawString("grade: " + gd.getGrade(),5,29);
-        graphic.drawString("time left: " + TimeUnit.MILLISECONDS.toSeconds(time),5,43);
+            // draw pokemons
+            double[] cord;
+            File f;
+            Agent agent;
+            Pokemon pok;
+            graphic.setColor(new Color(110, 80, 0));
+            for (int j=0; j<this.gd.getPokemons_size(); j++){
+                pok = this.gd.getPokemons().get(j);
+                cord = linearTransform(pok.getPos());
+                // draw pokemon
+                try {
+                    f = new File("pokmeons_image/"+pok.getId()+".png");
+                    Image img = ImageIO.read(f);
+                    graphic.drawImage(img, (int)cord[0], (int)(cord[1]-this.heightPoint*zoomInOut*3), (int)(50*zoomInOut), (int)(50*zoomInOut), this);
+                }
+                catch(Exception e) {
+                    // if pokemon picture didnt opened for some reason - print pokemons as BROWN circle
+                    graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint * zoomInOut, this.heightPoint * zoomInOut));
+                }
+                // string of the pokemon - 'value Edge: (src, dest)'
+                graphic.drawString(""+pok.getValue()+" Edge: ("+pok.getSrc()+","+pok.getDest()+")", (int)cord[0], (int)cord[1]);
+            }
 
-        // draw pokemons
-        double[] cord;
-        File f;
-        Agent agent;
-        Pokemon pok;
-        graphic.setColor(new Color(110, 80, 0));
-        for (int j=0; j<this.gd.getPokemons_size(); j++){
-            pok = this.gd.getPokemons().get(j);
-            cord = linearTransform(pok.getPos());
-            // draw pokemon
-            try {
-                f = new File("pokmeons_image/"+pok.getId()+".png");
-                Image img = ImageIO.read(f);
-                graphic.drawImage(img, (int)cord[0], (int)(cord[1]-this.heightPoint*zoomInOut*3), (int)(50*zoomInOut), (int)(50*zoomInOut), this);
+            // draw Agents
+            graphic.setColor(new Color(255, 0, 0));
+            for (int i=0; i<this.gd.getAgents_size(); i++){
+
+                agent = gd.getAgents().get(i);
+                cord = linearTransform(agent.getPos()); // linear transfer regular cord to width/height cord
+                // draw as red circle and write agent_id above
+                graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint*zoomInOut*3, this.heightPoint*zoomInOut*3));
+                graphic.drawString(""+agent.getId(), (int)cord[0], (int)cord[1]);
             }
-            catch(Exception e) {
-                // if pokemon picture didnt opened for some reason - print pokemons as BROWN circle
-                graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint * zoomInOut, this.heightPoint * zoomInOut));
-            }
-            // string of the pokemon - 'value Edge: (src, dest)'
-            graphic.drawString(""+pok.getValue()+" Edge: ("+pok.getSrc()+","+pok.getDest()+")", (int)cord[0], (int)cord[1]);
+            graphic.setColor(this.defNode);
+        }
+        catch (Exception e){
+            return;
         }
 
-        // draw Agents
-        graphic.setColor(new Color(255, 0, 0));
-        for (int i=0; i<this.gd.getAgents_size(); i++){
-
-            agent = gd.getAgents().get(i);
-            cord = linearTransform(agent.getPos()); // linear transfer regular cord to width/height cord
-            // draw as red circle and write agent_id above
-            graphic.draw(new Ellipse2D.Double(cord[0], cord[1], this.widthPoint*zoomInOut*3, this.heightPoint*zoomInOut*3));
-            graphic.drawString(""+agent.getId(), (int)cord[0], (int)cord[1]);
-        }
-        graphic.setColor(this.defNode);
     }
 
     /**
@@ -355,7 +360,7 @@ public class DrawGraph extends JPanel  implements MouseListener, MouseMotionList
         while(!this.exitFlag){
             repaint();
             try {
-                Thread.sleep(33);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

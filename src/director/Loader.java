@@ -367,6 +367,15 @@ public class Loader {
         }
         // remove all pokemons with diff mark field (means they r not existing in the server in the present)
         list.removeIf(poki -> poki.getMark() != this.mark); // thanks to intellij <3
+
+        List<Pokemon> tempP = ptr.getPokemons();
+
+        for (Pokemon piii : tempP){
+            if (piii.isEngaged()){
+                ptr.setEngaged(piii.getSrc(), piii.getDest());
+            }
+        }
+
         ptr.setPokemons_size(list.size());
     }
 }
