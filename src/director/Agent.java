@@ -18,8 +18,14 @@ public class Agent {
     int dest;
     double speed;
     GeoLocation pos;
+
     /**
-     * constructors
+     * @param ID - serial
+     * @param v - sum value of pokemons agent catched
+     * @param s - src node
+     * @param d - dest node (where agent is moving right now, -1 if no moving)
+     * @param sp - speed
+     * @param p - position (cordinates on map)
      */
     public Agent(int ID, double v, int s, int d, double sp, GeoLocation p){
         this.id = ID;
@@ -28,7 +34,6 @@ public class Agent {
         this.dest = d;
         this.speed = sp;
         this.pos = p;
-
     }
 
     public Agent(int ID, double v, int s, int d, double sp, double x, double y){

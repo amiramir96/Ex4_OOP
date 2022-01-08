@@ -12,7 +12,6 @@ import Graph.graphAlgo.Dijkstra;
 import graphics.Window;
 import Graph.impGraph.Dwg;
 
-
 public class MainProcess {
 
 

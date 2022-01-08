@@ -19,7 +19,10 @@ public class Executer implements Runnable{
     DirectedWeightedGraph currGraph;
     private int currDest;
 
-    /** Constructor */
+    /**
+     * @param id - agent serial id num
+     * @param g - gameData obj
+     */
     public Executer(int id, GameData g){
         this.agent_id = id;
         this.gd = g;
@@ -31,8 +34,7 @@ public class Executer implements Runnable{
     /**
      * @return time to end the next task (curr pos of agent -> first item in linked list
      * return 0 if:
-     *  ->there is no task that the agent moving to currectly
-     *
+     *  ->there is no task that the agent moving to currectlys
      */
     double timeToEndTask(){
         this.x = gd.getAgents().get(agent_id);
@@ -147,6 +149,9 @@ public class Executer implements Runnable{
      * @param nodes - list of nodes to add to the next_stations list
      */
     public void addManyStops(List<NodeData> nodes){
+        if (!nodes.isEmpty() && this.x.getSrc() == nodes.get(0).getKey() && this.x.getDest() == -1){
+            nodes.remove(0);
+        }
         for (NodeData node : nodes){
             if (this.next_stations.isEmpty() || this.next_stations.getLast() != node.getKey()){
                 this.next_stations.addLast(node.getKey());
