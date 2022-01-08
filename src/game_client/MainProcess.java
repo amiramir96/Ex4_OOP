@@ -2,6 +2,7 @@ package game_client;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import director.Loader;
@@ -73,26 +74,10 @@ public class MainProcess {
         Executer exec;
         for (int i=0; i < agent_amount; i++){
             exec = new Executer(i, currGD);
+            exec.setExecAgent(currGD.getAgents().get(i));
             executers.add(exec);
             threads.add(new Thread(exec));
         }
-
-
-
-        // shit -> to remove
-        String graphStr = client.getGraph();
-        System.out.println(graphStr);
-        Loader.setGraph(graphStr);
-
-        String agentsStr = client.getAgents();
-        System.out.println(agentsStr);
-        String pokemonsStr = client.getPokemons();
-        System.out.println(pokemonsStr);
-
-        // start client
-        client.start();
-        //        currGD.getCurr_client().login("316049311_212458244");
-
 
         // init vars
         double[] times = new double[executers.size()];
@@ -104,9 +89,9 @@ public class MainProcess {
         Dijkstra[] dijkstras = new Dijkstra[executers.size()]; // we gonna work with a Dijkstra obj for ea Agent
         List<Pokemon> tempFreePokemons = new ArrayList<>();
 
-        Help_Funcs algo = new Help_Funcs(currGD);
+//        BlackBox algo = new BlackBox(currGD);
 
-        int iterates = 10; // idx to control moves VS gameData updates VS server.move borders
+        int iterates = 6; // idx to control moves VS gameData updates VS server.move borders
         while (true) {
             /**
              * this block is the MAIN PROCESS of the game:
@@ -119,20 +104,16 @@ public class MainProcess {
              */
             if (client.isRunning().equals("true")) { // false -> end of programme
                 synchronized (client) {
-                /** THIS BLOCK IS SYNCRONIZED with the Client!!!! */
-                    if (iterates == 10) {
-                            client.move(); // move command for agents via clients
-                            iterates = 0;
-                            currGD.self_update(true, true); // get the most updated game info
+                    /** THIS BLOCK IS SYNCRONIZED with the Client!!!! */
+                    if (iterates == 7) {
+                        client.move(); // move command for agents via clients
+                        iterates = 0;
+                        currGD.self_update(true, true); // get the most updated game info
 
 
                         //-----------------------------------------------------------------------------------
                         // place for algorithm -> ori
                         /** HERE GONNA BE the BRAIN Process that decides which agent engage which pokemon*/
-
-
-                        algo.hashCode();
-
 
                         for (Executer ex : executers) {
                             ex.selfUpdateTimeToEndAll(currGD.getAgents().get(ex.getAgent_id()).getSpeed());
@@ -140,30 +121,34 @@ public class MainProcess {
                         tempFreePokemons = currGD.getFreePokemons();
                         speeds = updateSpeeds(currGD.getAgents());
                         for (Pokemon poki : tempFreePokemons) {
-                            for (Agent agent : currGD.getAgents()) {
-                                if (executers.get(agent.getId()).getNext_stations() == null || executers.get(agent.getId()).getNext_stations().isEmpty()) {
-                                    n = currGD.getCurr_graph().getNode(agent.getSrc());
-                                } else {
-                                    n = currGD.getCurr_graph().getNode(executers.get(agent.getId()).getNext_stations().getLast());
-                                }
-                                dijkstras[agent.getId()] = new Dijkstra(currGD.getCurr_graph(), n);
-                                dijkstras[agent.getId()].mapPathDijkstra(n);
-                                times[agent.getId()] = executers.get(agent.getId()).getTimeToEndAll() + dijkstras[agent.getId()].shortestToSpecificNode(poki.getSrc()) / speeds[agent.getId()];
-                            }
-                            min_time = Double.MAX_VALUE;
-                            min_idx = 0;
-                            for (int i = 0; i < times.length; i++) {
-                                if (min_time > times[i]) {
-                                    min_idx = i;
-                                    min_time = times[i];
-                                }
-                            }
-                            executers.get(min_idx).addManyStops(dijkstras[min_idx].shortestPathList(poki.getSrc()));
-                            executers.get(min_idx).addStop(poki.getDest());
-                            times = new double[executers.size()];
-                            poki.setEngaged(true);
-                        }
+                            if (thereIsFreeExec(executers)) {
 
+                                for (Agent agent : currGD.getAgents()) {
+                                    if (executers.get(agent.getId()).getNext_stations() == null || executers.get(agent.getId()).getNext_stations().isEmpty()) {
+                                        n = currGD.getCurr_graph().getNode(agent.getSrc());
+                                    } else {
+                                        n = currGD.getCurr_graph().getNode(executers.get(agent.getId()).getNext_stations().getLast());
+                                    }
+                                    dijkstras[agent.getId()] = new Dijkstra(currGD.getCurr_graph(), n);
+                                    dijkstras[agent.getId()].mapPathDijkstra(n);
+                                    times[agent.getId()] = executers.get(agent.getId()).getTimeToEndAll() + dijkstras[agent.getId()].shortestToSpecificNode(poki.getSrc()) / speeds[agent.getId()];
+                                }
+                                min_time = Double.MAX_VALUE;
+                                min_idx = 0;
+                                for (int i = 0; i < times.length; i++) {
+                                    if (min_time > times[i]) {
+                                        min_idx = i;
+                                        min_time = times[i];
+                                    }
+                                }
+                                if (executers.get(min_idx).isReady()){
+                                    executers.get(min_idx).addManyStops(dijkstras[min_idx].shortestPathList(poki.getSrc()));
+                                    executers.get(min_idx).addStop(poki.getDest());
+                                    times = new double[executers.size()];
+                                    currGD.setEngaged(poki.getSrc(), poki.getDest());
+                                }
+                            }
+                        }
                         // END OF ALGORITHM
                         //-----------------------------------------------------------------------------------
 
@@ -195,15 +180,24 @@ public class MainProcess {
             }
             else {
                 // client is down, game got to its end
+                windo.closeWindow();
                 break;
             }
             iterates++;
         }
         // shut down programme ^^
-        windo.closeWindow();
         if (client.isRunning().equals("true")){
             client.stop();
         }
+    }
+
+    private static boolean thereIsFreeExec(ArrayList<Executer> executers) {
+        for (Executer exec : executers){
+            if (exec.isReady()){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
