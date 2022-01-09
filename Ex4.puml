@@ -1,0 +1,310 @@
+@startuml
+
+/' diagram meta data start
+config=StructureConfiguration;
+{
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": ""
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": false,
+    "cutInterfaceStructures": false,
+    "cutDataStructures": false,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 6,
+    "backwardDepth": 6,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false // root node is included
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showClassGenericTypes": true,
+    "showMethods": true,
+    "showMethodParameterNames": true,
+    "showMethodParameterTypes": true,
+    "showMethodReturnType": true,
+    "showPackageLevels": 2,
+    "showDetailedClassStructure": true
+  },
+  "rootClass": "game_client.Client"
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="TB"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_100706955 { 
+   	label=graphics
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   DrawGraph100706955[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)DrawGraph</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   algoGraph: DirectedWeightedGraphAlgorithms [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   amirFont: Font [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   currGraph: DirectedWeightedGraph [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   defEdge: Color [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   defNode: Color [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   edgeStroke: Stroke [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   exitFlag: boolean [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   gd: GameData [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   heightArrow: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   heightPoint: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   min_max_cord: double[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   mouseNextPos: Point2D [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   mousePoint: Point2D [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   mousePrevPos: Point2D [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   nodeStroke: Stroke [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   widthArrow: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   widthPoint: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   window: Window [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   zoomInOut: double [1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >- drawArrow(g: Graphics, xSrc: double, ySrc: double, xDest: double, yDest: double)</TD></TR>
+<TR><TD ALIGN="LEFT" ># linearTransform(point: GeoLocation): double[]</TD></TR>
+<TR><TD ALIGN="LEFT" >+ mouseClicked(e: MouseEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ mouseDragged(e: MouseEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ mouseEntered(e: MouseEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ mouseExited(e: MouseEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ mouseMoved(e: MouseEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ mousePressed(e: MouseEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ mouseReleased(e: MouseEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ mouseWheelMoved(e: MouseWheelEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ paint(g: Graphics)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ paintComponents(g: Graphics)</TD></TR>
+<TR><TD ALIGN="LEFT" >- paintGameItems(g: Graphics)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ run()</TD></TR>
+<TR><TD ALIGN="LEFT" >- updateMinMax()</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Menu100706955[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Menu</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   algoGraph: DirectedWeightedGraphAlgorithms [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   drawer: DrawGraph [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   exitGUI: JMenuItem [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   funcEvent: ActionEvent [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   menu: JMenu [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   w: Window [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ actionPerformed(menuClickedEvent: ActionEvent)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Window100706955[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Window</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   currAlgo: DirectedWeightedGraphAlgorithms [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   currGameData: GameData [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   drawer: DrawGraph [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   menu: Menu [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ closeWindow()</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_246043532 { 
+   	label=director
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   BlackBox246043532[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)BlackBox</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   currGD: GameData [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   dijkstras: Dijkstra[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   executers: ArrayList&lt;Executer&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   speeds: double[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   tempFreePokemons: List&lt;Pokemon&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   times: double[] [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ runAlgorithm()</TD></TR>
+<TR><TD ALIGN="LEFT" >- thereIsFreeAgents(): boolean</TD></TR>
+<TR><TD ALIGN="LEFT" >- updateSpeeds(agents: List&lt;Agent&gt;): double[]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Executer246043532[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Executer</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   agent_id: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   currDest: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   currGraph: DirectedWeightedGraph [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   gd: GameData [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   next_stations: LinkedList&lt;Integer&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   timeToEndAll: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   x: Agent [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ addManyStops(nodes: List&lt;NodeData&gt;)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ addStop(node_id: int)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ run()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ selfUpdateTimeToEndAll(speed: double): double</TD></TR>
+<TR><TD ALIGN="LEFT" ># timeToEndTask(): double</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+GameData246043532[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)GameData</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   agents: List&lt;Agent&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   agents_size: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   curr_algo: DirectedWeightedGraphAlgorithms [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   curr_client: Client [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   curr_graph: DirectedWeightedGraph [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   game_level: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   grade: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   graph_directory: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   id: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   is_logged_in: boolean [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   load: Loader [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   max_user_level: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   moves: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   pokemons: List&lt;Pokemon&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   pokemons_size: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   timeLeft: String [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ self_update(agentFlag: boolean, pokFlag: boolean)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_447434568 { 
+   	label=game_client
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   Client447434568[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Client</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   clientSocket: Socket [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   in: BufferedReader [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   out: PrintWriter [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ addAgent(jsonOfNode: String): String</TD></TR>
+<TR><TD ALIGN="LEFT" >+ chooseNextEdge(jsonAgentAndNode: String)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ login(id: String)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ move()</TD></TR>
+<TR><TD ALIGN="LEFT" >- sendMessage(msg: String): String</TD></TR>
+<TR><TD ALIGN="LEFT" >+ start()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ startConnection(ip: String, port: int)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ stop()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ stopConnection()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ timeToEnd(): String</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+'edges    
+BlackBox246043532 -> Executer246043532[label="executers
+[0..*]"];
+BlackBox246043532 -> GameData246043532[label="currGD
+[0..1]"];
+DrawGraph100706955 -> GameData246043532[label="gd
+[0..1]"];
+DrawGraph100706955 -> Window100706955[label="window
+[0..1]"];
+Executer246043532 -> GameData246043532[label="gd
+[0..1]"];
+GameData246043532 -> Client447434568[label="curr_client
+[0..1]"];
+Menu100706955 -> DrawGraph100706955[label="drawer
+[0..1]"];
+Menu100706955 -> Window100706955[label="w
+[0..1]"];
+Window100706955 -> DrawGraph100706955[label="drawer
+[0..1]"];
+Window100706955 -> GameData246043532[label="currGameData
+[0..1]"];
+Window100706955 -> Menu100706955[label="menu
+[0..1]"];
+    
+}
+@enduml
