@@ -14,6 +14,11 @@ Our principles to this project is to create:<br>
 3. gui flow is smooth as much as possible and simple for the user to understand. <br>
 4. use our DirectedWeightedGraph and algorithms classes from previous assigment and stands with the above bullets. [link for prev assigment](https://github.com/amiramir96/Ex2-OOP) <br>
 
+in the end, thats how the game looks like: <br>
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/89981387/148676984-2f35d222-a2e5-4d87-94cd-ab9308a7cfd4.gif)
+
+<br>
+
 ## Architecture of the project
 the project splits to the next main packges:
 
@@ -49,7 +54,7 @@ this time, the GUI opens, runs and stops automatically from the moment the game 
 the user doesnt have a control over anythin in the window beside the option to stop the game via exiting the game window:<br>
      stop the game meanwhile running, can happen by clieck: Menu (at the menu toolbar) -> exit. <br>
 <br>
-for more details about the GUI (symbol explanation, and short clip) [click here](https://github.com/amiramir96/Ex4_OOP/wiki/GUI)
+for more details about the GUI (symbol explanation, and full scenario clip) [click here](https://github.com/amiramir96/Ex4_OOP/wiki/GUI)
 <br>
 
 
