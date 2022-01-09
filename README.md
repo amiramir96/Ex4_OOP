@@ -55,12 +55,11 @@ for more details about the GUI (symbol explanation, and short clip) [click here]
 
 ## Running The Game
 Running the game is performed as instracted, by calling `java -jar Ex4_Server_v0.0.jar <stage_num [0,15]>` for activating the server within scenario number (from 0 to 15 include). <br>
-to connect with our program as client, please run `java -jar director_client_V1.0.jar` to activate the program and the gui as well. <br>
+to connect with our program as client, please run `java -jar director_client_V1.2.jar` to activate the program and the gui as well. <br>
 both of the jar files shall be at the same folder and be running from thats folder. <br>
 
 ## Release 
-if u would like to just play without handling any code, u can get only the server game and client via downloading the Release V1.0, which holds both of the named jar files <br>
-----------------------------------TBD ADD RELEASE--------------------------
+if u would like to just play without handling any code, u can get only the server game and client via downloading the Release V1.2, which holds both of the named jar files <br>
 <br>
 
 ## Scenario Results
